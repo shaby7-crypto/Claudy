@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReThinker – Thinking AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue:   #324fff;
+      --yellow: #f3b141;
+      --teal:   #5ad3ac;
+      --pink:   #e55b92;
+      --orange: #e76f10;
+      --beige:  #eacec7;
+      --dark:   #111111;
+      --white:  #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Heebo', sans-serif; direction: rtl; text-align: right; color: var(--dark); overflow-x: hidden; }
+
+    /* ─── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw; height: 64px;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(14px);
+      border-bottom: 3px solid var(--yellow); transition: transform .3s ease;
+    }
+    .nav-logo img { height: 32px; display: block; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--dark); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-cta { background: var(--blue) !important; color: var(--white) !important; padding: 8px 22px; border-radius: 100px; font-weight: 700 !important; }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ─── HERO COVER ──────────────────────────────────── */
+    .hero { padding-top: 64px; }
+    .hero-cover { position: relative; width: 100%; height: calc(100vh - 64px); overflow: hidden; }
+    .hero-cover > img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .hero-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+    .hero-overlay h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(56px, 9vw, 130px); font-weight: 900;
+      color: var(--white); text-align: center; line-height: 1;
+      text-shadow: 0 4px 40px rgba(0,0,0,.35); letter-spacing: -1px;
+    }
+    .btn-contact {
+      background: var(--white); color: var(--dark);
+      font-family: 'Heebo', sans-serif; font-size: 17px; font-weight: 700;
+      padding: 14px 40px; border-radius: 100px; text-decoration: none;
+      display: inline-block; transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(0,0,0,.2);
+    }
+    .btn-contact:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.28); }
+
+    /* ─── HERO BLUE ───────────────────────────────────── */
+    .hero-text { background: var(--blue); padding: clamp(52px,7vw,96px) 8vw; text-align: center; }
+    .hero-text h1 { font-size: clamp(28px,4.5vw,60px); font-weight: 900; color: var(--white); line-height: 1.2; max-width: 840px; margin: 0 auto 36px; }
+    .hero-text h1 em { font-style: normal; color: var(--yellow); }
+    .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { background: var(--yellow); color: var(--dark); font-family: 'Heebo',sans-serif; font-size: 17px; font-weight: 800; padding: 14px 38px; border: none; border-radius: 100px; cursor: pointer; text-decoration: none; display: inline-block; transition: transform .2s, box-shadow .2s; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.22); }
+    .btn-outline { background: transparent; color: var(--white); font-family: 'Heebo',sans-serif; font-size: 17px; font-weight: 600; padding: 13px 36px; border: 2px solid rgba(255,255,255,.55); border-radius: 100px; cursor: pointer; text-decoration: none; display: inline-block; transition: border-color .2s, background .2s; }
+    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.1); }
+
+    /* ─── STATS ───────────────────────────────────────── */
+    .stats-bar { background: var(--dark); padding: 30px 8vw; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 24px; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Poppins',sans-serif; font-size: clamp(30px,4vw,48px); font-weight: 800; color: var(--yellow); display: block; line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-size: 14px; color: rgba(255,255,255,.65); }
+
+    /* ─── SHARED ──────────────────────────────────────── */
+    .section-title { font-size: clamp(30px,4vw,52px); font-weight: 900; color: var(--dark); line-height: 1.12; margin-bottom: clamp(28px,4vw,52px); }
+
+    /* ─── LEARNING (yellow) ───────────────────────────── */
+    .learning { background: var(--yellow); padding: clamp(64px,8vw,112px) 8vw; text-align: center; }
+    .learning-body { max-width: 780px; margin: 0 auto; font-size: clamp(16px,1.6vw,20px); font-weight: 400; color: var(--dark); line-height: 1.9; }
+
+    /* ─── HOW IT WORKS / VALUES (white) ──────────────── */
+    .values { background: var(--white); padding: clamp(64px,8vw,112px) 8vw; text-align: center; }
+    .values-intro {
+      max-width: 820px; margin: 0 auto clamp(48px,6vw,80px);
+      font-size: clamp(16px,1.6vw,20px); color: #555; line-height: 1.9;
+    }
+    .values-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: clamp(40px,6vw,80px) clamp(32px,5vw,72px); max-width: 900px; margin: 0 auto; }
+    .value-card { text-align: center; }
+    .value-img {
+      width: clamp(150px,16vw,220px); height: clamp(150px,16vw,220px);
+      border-radius: 50%; margin: 0 auto 20px; overflow: hidden;
+      border: 4px solid var(--yellow); box-shadow: 0 6px 28px rgba(0,0,0,.1);
+      transition: transform .3s;
+    }
+    .value-card:hover .value-img { transform: scale(1.04); }
+    .value-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .value-card h4 { font-size: clamp(18px,1.8vw,22px); font-weight: 800; color: var(--dark); line-height: 1.3; margin-bottom: 12px; }
+    .value-card p { font-size: clamp(16px,1.6vw,20px); color: #555; line-height: 1.75; max-width: 320px; margin: 0 auto; }
+
+    /* ─── MEETINGS (beige) ───────────────────────────── */
+    .meetings { background: #eacec7; padding: clamp(64px,8vw,112px) 8vw; text-align: center; }
+    .meetings-grid { display: flex; justify-content: center; gap: clamp(24px,3vw,40px); flex-wrap: wrap; margin-top: clamp(40px,5vw,64px); }
+    .meeting-card { flex: 1; min-width: 260px; max-width: 340px; display: flex; flex-direction: column; align-items: center; }
+    .meeting-img { width: 100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; margin: 0 0 20px; }
+    .meeting-img img { width: 100%; height: 100%; object-fit: cover; }
+    .meeting-card h4 { font-size: clamp(18px,1.8vw,22px); font-weight: 800; margin-bottom: 12px; color: var(--dark); }
+    .meeting-card p { font-size: clamp(16px,1.6vw,20px); line-height: 1.75; color: #333; margin-bottom: 20px; }
+    .meeting-card .btn-details { display: inline-block; margin-top: auto; background: var(--blue); color: #fff; font-size: 15px; font-weight: 700; padding: 10px 28px; border-radius: 50px; text-decoration: none; transition: opacity .2s; }
+    .meeting-card .btn-details:hover { opacity: .85; }
+
+    /* ─── VIDEOS (beige) ──────────────────────────────── */
+    .videos { background: var(--beige); padding: clamp(64px,8vw,112px) 8vw; text-align: center; }
+    .videos .section-title { margin-bottom: 10px; }
+    .videos .section-sub { font-size: 17px; color: rgba(17,17,17,.6); margin-bottom: 52px; }
+    .videos-grid { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+    .video-wrapper { border-radius: 22px; overflow: hidden; box-shadow: 0 10px 44px rgba(0,0,0,.15); background: #000; width: clamp(200px,28vw,340px); transition: transform .3s, box-shadow .3s; flex-shrink: 0; }
+    .video-wrapper:hover { transform: translateY(-5px); box-shadow: 0 18px 60px rgba(0,0,0,.22); }
+    .video-wrapper video { width: 100%; display: block; aspect-ratio: 9/16; object-fit: cover; }
+    .video-note { max-width: 680px; margin: 40px auto 0; font-size: clamp(15px,1.4vw,18px); color: #555; line-height: 1.85; font-style: italic; }
+
+    /* ─── TESTIMONIALS (teal) ─────────────────────────── */
+    .testimonials { background: var(--teal); padding: clamp(64px,8vw,112px) 8vw; }
+    .testimonials .section-title { text-align: center; color: var(--dark); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .testimonial-card { background: rgba(255,255,255,.28); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.4); border-radius: 22px; padding: 32px 28px; transition: background .3s, transform .3s; }
+    .testimonial-card:hover { background: rgba(255,255,255,.38); transform: translateY(-4px); }
+    .quote-mark { font-size: 56px; font-weight: 900; color: rgba(17,17,17,.2); line-height: .6; margin-bottom: 18px; font-family: Georgia,serif; }
+    .testimonial-card blockquote { font-size: 15px; color: var(--dark); line-height: 1.85; margin-bottom: 24px; }
+    .testimonial-card blockquote strong { font-weight: 800; }
+    .testimonial-author { border-top: 1px solid rgba(17,17,17,.15); padding-top: 16px; }
+    .testimonial-author strong { display: block; font-size: 15px; font-weight: 800; color: var(--dark); }
+    .testimonial-author span { font-size: 13px; color: rgba(17,17,17,.6); }
+
+    /* ─── TEAM (white) ────────────────────────────────── */
+    .team { background: var(--white); padding: clamp(64px,8vw,112px) 8vw; }
+    .team .section-title { text-align: center; }
+    .team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; max-width: 860px; margin: 0 auto; }
+    .team-card { text-align: center; }
+    .team-photo {
+      width: clamp(140px,16vw,200px); height: clamp(140px,16vw,200px);
+      border-radius: 50%; margin: 0 auto 18px; overflow: hidden;
+      border: 4px solid var(--yellow); box-shadow: 0 8px 32px rgba(0,0,0,.12);
+      transition: transform .3s;
+    }
+    .team-card:hover .team-photo { transform: scale(1.04); }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+    .team-card h4 { font-size: 19px; font-weight: 800; color: var(--dark); margin-bottom: 5px; }
+    .team-role { font-size: 14px; color: rgba(17,17,17,.55); display: block; margin-bottom: 14px; }
+    .social-icons { display: flex; gap: 10px; justify-content: center; align-items: center; }
+    .social-icons a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; color: var(--dark); text-decoration: none; transition: opacity .2s, transform .2s; }
+    .social-icons a:hover { opacity: .55; transform: translateY(-2px); }
+    .social-icons svg { width: 22px; height: 22px; fill: var(--dark); }
+
+    /* ─── CTA / FOOTER ────────────────────────────────── */
+    .cta-footer { background: var(--orange); padding: clamp(64px,8vw,96px) 8vw clamp(40px,5vw,64px); text-align: center; }
+    .cta-footer h2 { font-size: clamp(28px,4vw,54px); font-weight: 900; color: var(--white); margin-bottom: 12px; }
+    .cta-footer h2 em { font-style: normal; color: var(--yellow); }
+    .cta-footer > p { font-size: 18px; color: rgba(255,255,255,.88); margin-bottom: 40px; }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; max-width: 540px; margin: 0 auto 52px; }
+    .contact-form input,
+    .contact-form textarea { width: 100%; font-family: 'Heebo',sans-serif; font-size: 16px; padding: 14px 22px; border: 2px solid rgba(255,255,255,.35); border-radius: 16px; background: rgba(255,255,255,.15); color: var(--white); outline: none; text-align: right; transition: border-color .2s; resize: none; }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder { color: rgba(255,255,255,.6); }
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--yellow); }
+    .contact-form textarea { border-radius: 16px; min-height: 120px; }
+    .contact-form button { font-family: 'Heebo',sans-serif; font-size: 16px; font-weight: 800; background: var(--dark); color: var(--white); border: none; padding: 14px 32px; border-radius: 100px; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+    .contact-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .form-success { display: none; background: rgba(255,255,255,.2); border-radius: 16px; padding: 24px; font-size: 18px; font-weight: 700; color: #fff; }
+    .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,.2); }
+    .footer-bottom { padding-top: 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,.5); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 14px; color: rgba(255,255,255,.7); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--yellow); }
+
+    /* ─── LOGO BAR ────────────────────────────────────── */
+    .footer-logo-bar { background: var(--dark); padding: 28px 8vw; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-bar img { height: 44px; display: block; }
+
+    /* ─── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+    .fade-up { opacity:0; animation: fadeUp .75s ease forwards; }
+    .d1 { animation-delay:.1s; } .d2 { animation-delay:.3s; } .d3 { animation-delay:.5s; }
+    .reveal { opacity:0; transform:translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    /* ─── MOBILE ──────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-cover { height: 70vw; min-height: 300px; }
+      .hero-overlay h2 { font-size: clamp(40px,12vw,80px); }
+      .values-grid { grid-template-columns: 1fr; }
+      .videos-grid { flex-direction: column; align-items: center; }
+      .video-wrapper { width: min(90vw,320px); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .footer-bottom { flex-direction: column; align-items: center; }
+    }
+    @media (max-width: 480px) {
+      .team-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#" class="nav-logo"><img src="rethinker אתר/logo rethinker.jpg" alt="ReThinker" /></a>
+    <ul class="nav-links">
+      <li><a href="#learning">מרחבי הלמידה</a></li>
+      <li><a href="#values">איך זה קורה</a></li>
+      <li><a href="#videos">סרטונים</a></li>
+      <li><a href="#testimonials">המלצות</a></li>
+      <li><a href="#contact" class="nav-cta">צרו קשר</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-cover">
+      <img src="rethinker אתר/strip.jpg" alt="ReThinker" />
+      <div class="hero-overlay">
+        <h2 class="fade-up d1">Thinking AI</h2>
+        <a href="#contact" class="btn-contact fade-up d2">ליצירת קשר</a>
+      </div>
+    </div>
+    <div class="hero-text">
+      <h1 class="fade-up d1">מובילים את החינוך<br/>בעידן <em>הבינה המלאכותית</em></h1>
+      <div class="hero-buttons fade-up d2">
+        <a href="#contact" class="btn-primary">צרו קשר</a>
+        <a href="#learning" class="btn-outline">לפרטים</a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- LEARNING -->
+  <section class="learning" id="learning">
+    <h2 class="section-title reveal">חשיבה יצירתית. עשיה משמעותית.</h2>
+    <p class="learning-body reveal">
+      בעולם שבו ידע, רעיונות ומסרים עוברים יותר ויותר דרך תמונות, סרטונים וחוויות חזותיות — היכולת לחשוב, ליצור וללמד באמצעות דימוי חזותי היא כבר לא רק יתרון יצירתי, אלא מיומנות יסוד. דימוי מאפשר לנו להבין רעיונות מורכבים במהירות, לזהות קשרים, לעורר רגש, לזכור מידע לאורך זמן ולתקשר מסר בצורה ברורה ומשמעותית. כשאנחנו משלבים בין מילים, תמונות, תנועה וכלי בינה מלאכותית, אנחנו פותחים בפני הלומדים דרך חדשה לחשוב: לא רק לקרוא או לשמוע ידע, אלא לראות אותו, לפרק אותו, לבנות אותו מחדש ולהפוך אותו לרעיון חי.
+    </p>
+  </section>
+
+  <!-- MEETINGS -->
+  <section class="meetings" id="meetings">
+    <h2 class="section-title reveal">המפגשים שלנו</h2>
+    <div class="meetings-grid">
+      <div class="meeting-card reveal">
+        <div class="meeting-img"><img src="rethinker אתר/בית ספר של העתיד.jpg" alt="בית הספר של העתיד" /></div>
+        <h4>בית הספר של העתיד</h4>
+        <p>סדנה מעשית העוסקת בקשר שבין ערכים חינוכיים, תפיסות למידה והמרחב הפיזי של בית הספר. באמצעות חשיבה יצירתית וכלי בינה מלאכותית, המשתתפים יפתחו וימחישו רעיונות לבית הספר של העתיד.</p>
+        <a href="#contact" class="btn-details">לפרטים נוספים</a>
+      </div>
+      <div class="meeting-card reveal">
+        <div class="meeting-img"><img src="rethinker אתר/שגרירי העתיד .png" alt="שגרירי העתיד" /></div>
+        <h4>שגרירי העתיד</h4>
+        <p>סדנה חווייתית המחברת בין מחקר, יצירה וטכנולוגיה, ומלמדת כיצד להפוך רעיון מורכב לתוצר ויזואלי ברור שאפשר לראות, להבין ולדבר עליו. באמצעות כלי AI, המשתתפים מפתחים את הרעיון לסרטון של דקה ולומדים לזקק מסר, לבנות סיפור ולהעביר ידע בצורה קצרה ומשמעותית.</p>
+        <a href="shgrirey-haatid.html" class="btn-details">לפרטים נוספים</a>
+      </div>
+      <div class="meeting-card reveal">
+        <div class="meeting-img"><img src="rethinker אתר/האדם החושב.jpg" alt="האדם החושב" /></div>
+        <h4>האדם החושב</h4>
+        <p>סדנה חווייתית המחברת בין יצירה, טכנולוגיה וחשיבה ביקורתית באמצעות מגוון כלי AI עדכניים. המשתתפים יהפכו רעיון אישי ליצירה שתוצג בתערוכה דיגיטלית, וירכשו ביטחון וכלים לפעול בעולם טכנולוגי משתנה.</p>
+        <a href="#contact" class="btn-details">לפרטים נוספים</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS / VALUES -->
+  <section class="values" id="values">
+    <h2 class="section-title reveal">ללמוד לחשוב וליצור עם AI</h2>
+    <p class="values-intro reveal">
+      הסדנאות מיועדות לאנשי חינוך, סטודנטים להוראה ולעיצוב, מרצים וצוותים פדגוגיים המעוניינים לפתח דרכי למידה עדכניות, יצירתיות ורלוונטיות לעולם החדש. במהלך יום הסדנה המשתתפים עובדים בצוותים על אתגר יצירתי משותף, מפתחים פתרון מבוסס AI, ומתנסים ביצירת דימויים, מודלים, סרטונים ורעיונות בעלי משמעות. דרך ההתנסות הם לומדים כיצד להשתמש בכלי בינה מלאכותית לא רק כדי לייצר תוצרים יפים, אלא כדי להעמיק חשיבה, לעודד סקרנות, לפתח דמיון ביקורתי וליצור למידה שנשארת בזיכרון.
+    </p>
+    <div class="values-grid">
+      <div class="value-card reveal">
+        <div class="value-img"><img src="rethinker אתר/ללמוד לחשוב ai.jpg" alt="ללמוד לחשוב AI" /></div>
+        <h4>ללמוד לחשוב AI</h4>
+        <p>שיטת לימוד שמטפחת את היכולת להבין, ליצור וליישם בינה מלאכותית בכלים מעשיים.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-img"><img src="rethinker אתר/תמיכה ערכית וטכנולוגית.jpg" alt="תמיכה ערכית וטכנולוגית" /></div>
+        <h4>תמיכה ערכית וטכנולוגית</h4>
+        <p>שילוב של מיומניות טכנולוגיות עם ערכים חינוכיים כמו שיתוף פעולה, יצירתיות ויזמות.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-img"><img src="rethinker אתר/חיבור אמיתי בין מורים לתלמידים.jpg" alt="חיבור אמיתי בין מורים לתלמידים" /></div>
+        <h4>חיבור אמיתי בין מורים לתלמידים</h4>
+        <p>עבודת צוות הדוקה שמחזקת את הקשר בין צוותי החינוך לתלמידים תוך למידה משותפת.</p>
+      </div>
+      <div class="value-card reveal">
+        <div class="value-img"><img src="rethinker אתר/כלים מעשיים ליישום מיידי.jpg" alt="כלים מעשיים ליישום מיידי" /></div>
+        <h4>כלים מעשיים ליישום מיידי</h4>
+        <p>המפגשים והסדנאות מספקים פתרונות פרקטיים ומוכנים שניתן להטמיע בבתי הספר כבר מחר.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <h2 class="section-title reveal">מה מספרים עלינו</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="quote-mark">"</div>
+        <blockquote>תודה לכם על קורס חוויתי מלא בחברים חדשים, חוויות ממלאות ומרגשות, מצחיקות ומלמדות!! על מורים אלופים ומובילה אחת <strong>מהממת...</strong></blockquote>
+        <div class="testimonial-author"><strong>רננה גרסיה</strong><span>אמא לילד בסדנא</span></div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="quote-mark">"</div>
+        <blockquote>רציתי לשתף שסיימתי עכשיו את האחרון ממש שנכנס הוא אחד הילדים שהשתתפו בסדנה. האבא של הילד ניגש אלי ואמר לי שהבן שלו אמר לו על הסדנה — <strong>שזה היה הכי כיף של בית ספר.</strong> שכבה הוא רוצה ללמוד. תודה רבה על אירוע משמעותי, מאורגן ויצירתי <strong>מאין כמוהו.</strong></blockquote>
+        <div class="testimonial-author"><strong>לירון קורץ</strong><span>מנהלת התיכון החדש למנהיגות רב תחומית ודיפלומטיה</span></div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="quote-mark">"</div>
+        <blockquote>אני רוצה להודות לכם על הסדנה המדהימה שהובלתם בבית ספרנו, אשר היה לא רק מאורגן למופת, אלא גם משמעותי ובלתי נשכח. התלמידים חוו למידה שונה ומרגשת, ששילבה <strong>בינה מלאכותית, עבודת צוות ושימוש בטכנולוגיות מתקדמות.</strong></blockquote>
+        <div class="testimonial-author"><strong>אורנית גדג'-שני</strong><span>מנהלת בית הספר ששת שנתי ביבנה</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="team" id="team">
+    <h2 class="section-title reveal">הצוות שלנו</h2>
+    <div class="team-grid">
+
+      <!-- עדי ארליך -->
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="rethinker אתר/עדי.jpeg" alt="עדי ארליך" /></div>
+        <h4>עדי ארליך</h4>
+        <span class="team-role">הדרכה וחינוך</span>
+        <div class="social-icons">
+          <a href="https://www.linkedin.com/in/adi-erlich-39791743" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/share/1FtRVhPT4h/?mibextid=wwXIfr" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/berlich_interior_design/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- נטלי שפיר -->
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="rethinker אתר/נטלי.jpeg" alt="נטלי שפיר" /></div>
+        <h4>נטלי שפיר</h4>
+        <span class="team-role">קשרי קהילה ופיתוח עסקי</span>
+        <div class="social-icons">
+          <a href="https://www.tiktok.com/@natalyshafir" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=100069561489996" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/nataly.shafir/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- שרון מס -->
+      <div class="team-card reveal">
+        <div class="team-photo"><img src="rethinker אתר/sharon.jpg" alt="שרון מס" /></div>
+        <h4>שרון מס</h4>
+        <span class="team-role">אשת חזון ואסטרטגיה</span>
+        <div class="social-icons">
+          <a href="https://www.youtube.com/@sunbow22" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+          </a>
+          <a href="https://www.facebook.com/sharon.mass.7/" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/sharonmass" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER / CTA -->
+  <footer class="cta-footer" id="contact">
+    <h2 class="reveal">רוצים לשמוע <em>עוד?</em></h2>
+    <p class="reveal">השאירו פרטים ונחזור אליכם בהקדם</p>
+    <form class="contact-form reveal" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="hidden" name="bot-field" />
+      <input type="text" name="name" placeholder="שם מלא" dir="rtl" required />
+      <input type="email" name="email" placeholder="כתובת אימייל" dir="rtl" required />
+      <textarea name="message" placeholder="במה נוכל לעזור?" dir="rtl" required></textarea>
+      <button type="submit">שלחו הודעה</button>
+    </form>
+    <div class="form-success reveal" id="form-success">✓ תודה! נחזור אליכם בהקדם</div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom reveal">
+      <span class="footer-copy">© 2025 ReThinker. כל הזכויות שמורות.</span>
+      <ul class="footer-links">
+        <li><a href="#">אודות</a></li>
+        <li><a href="#learning">מרחבי למידה</a></li>
+        <li><a href="#values">איך זה קורה</a></li>
+        <li><a href="mailto:hello@rethinker.co.il">צור קשר</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- LOGO BAR -->
+  <div class="footer-logo-bar">
+    <img src="rethinker אתר/לוגו שקוף.png" alt="ReThinker" />
+  </div>
+
+  <script>
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 65);
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    let lastY = 0;
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      nav.style.transform = (y > lastY && y > 120) ? 'translateY(-100%)' : 'translateY(0)';
+      lastY = y;
+    });
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString() })
+        .then(() => {
+          form.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
+        })
+        .catch(() => {
+          form.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
+        });
+    }
+  </script>
+</body>
+</html>
