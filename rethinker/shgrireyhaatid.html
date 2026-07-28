@@ -166,7 +166,35 @@
     }
     .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.22); }
 
+    /* ─── CLOSING FOOTER / CTA ───────────────────────────── */
+    .cta-footer { background: var(--orange); padding: clamp(64px,8vw,96px) 8vw clamp(40px,5vw,64px); text-align: center; }
+    .cta-footer h2 { font-size: clamp(28px,4vw,54px); font-weight: 900; color: var(--white); margin-bottom: 12px; }
+    .cta-footer h2 em { font-style: normal; color: var(--yellow); }
+    .cta-footer > p { font-size: 18px; color: rgba(255,255,255,.88); margin-bottom: 40px; }
+    .contact-form { display: flex; flex-direction: column; gap: 14px; max-width: 540px; margin: 0 auto 52px; }
+    .contact-form input,
+    .contact-form textarea { width: 100%; font-family: 'Heebo',sans-serif; font-size: 16px; padding: 14px 22px; border: 2px solid rgba(255,255,255,.35); border-radius: 16px; background: rgba(255,255,255,.15); color: var(--white); outline: none; text-align: right; transition: border-color .2s; resize: none; }
+    .contact-form input::placeholder,
+    .contact-form textarea::placeholder { color: rgba(255,255,255,.6); }
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--yellow); }
+    .contact-form textarea { border-radius: 16px; min-height: 120px; }
+    .contact-form button { font-family: 'Heebo',sans-serif; font-size: 16px; font-weight: 800; background: var(--dark); color: var(--white); border: none; padding: 14px 32px; border-radius: 100px; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+    .contact-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+    .form-success { display: none; background: rgba(255,255,255,.2); border-radius: 16px; padding: 24px; font-size: 18px; font-weight: 700; color: #fff; }
+    .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,.2); }
+    .footer-bottom { padding-top: 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,.5); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-size: 14px; color: rgba(255,255,255,.7); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--yellow); }
+    .footer-logo-bar { background: var(--dark); padding: 28px 8vw; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-bar img { height: 44px; display: block; }
+
     /* ─── MOBILE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .footer-bottom { flex-direction: column; align-items: center; }
+    }
     @media (max-width: 600px) {
       .banner { height: 52vw; }
     }
@@ -288,14 +316,55 @@
       </div>
     </div>
 
-    <!-- CTA -->
-    <div class="page-cta">
-      <h3>מעוניינים לשמוע עוד?</h3>
-      <p>צרו איתנו קשר ונשמח להתאים את הסדנה לצרכים שלכם</p>
-      <a href="index.html#contact" class="btn-cta">צרו קשר</a>
-    </div>
-
   </main>
+
+  <!-- FOOTER / CTA -->
+  <footer class="cta-footer" id="contact">
+    <h2>רוצים לשמוע <em>עוד?</em></h2>
+    <p>השאירו פרטים ונחזור אליכם בהקדם</p>
+    <form class="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="hidden" name="bot-field" />
+      <input type="text" name="name" placeholder="שם מלא" dir="rtl" required />
+      <input type="email" name="email" placeholder="כתובת אימייל" dir="rtl" required />
+      <textarea name="message" placeholder="במה נוכל לעזור?" dir="rtl" required></textarea>
+      <button type="submit">שלחו הודעה</button>
+    </form>
+    <div class="form-success" id="form-success">✓ תודה! נחזור אליכם בהקדם</div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 ReThinker. כל הזכויות שמורות.</span>
+      <ul class="footer-links">
+        <li><a href="index.html">דף הבית</a></li>
+        <li><a href="index.html#learning">מרחבי למידה</a></li>
+        <li><a href="index.html#values">איך זה קורה</a></li>
+        <li><a href="mailto:hello@rethinker.co.il">צור קשר</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- LOGO BAR -->
+  <div class="footer-logo-bar">
+    <img src="rethinker אתר/לוגו שקוף.png" alt="ReThinker" />
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString() })
+        .then(() => {
+          form.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
+        })
+        .catch(() => {
+          form.style.display = 'none';
+          document.getElementById('form-success').style.display = 'block';
+        });
+    }
+  </script>
 
 </body>
 </html>
