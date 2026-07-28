@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>שגרירי העתיד – ReThinker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:   #324fff;
+      --yellow: #f3b141;
+      --teal:   #5ad3ac;
+      --pink:   #e55b92;
+      --orange: #e76f10;
+      --beige:  #eacec7;
+      --dark:   #111111;
+      --white:  #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Heebo', sans-serif; color: var(--dark); background: var(--white); direction: rtl; }
+
+    /* ─── NAV ──────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 6vw;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      box-shadow: 0 2px 18px rgba(0,0,0,.07);
+    }
+    .nav-logo img { height: 40px; display: block; }
+    .nav-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--blue); font-size: 15px; font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-back:hover { opacity: .75; }
+
+    /* ─── BANNER ────────────────────────────────────────── */
+    .banner {
+      margin-top: 72px;
+      width: 100%; height: clamp(260px, 38vw, 520px);
+      overflow: hidden; position: relative;
+    }
+    .banner img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+    .banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,.18) 0%, rgba(0,0,0,.52) 100%);
+      display: flex; align-items: flex-end; padding: clamp(28px,5vw,60px) clamp(24px,6vw,80px);
+    }
+    .banner-title {
+      font-family: 'Heebo', sans-serif;
+      font-size: clamp(32px,5vw,64px);
+      font-weight: 900; color: #fff; line-height: 1.1;
+    }
+
+    /* ─── CONTENT ───────────────────────────────────────── */
+    .page-content { max-width: 820px; margin: 0 auto; padding: clamp(48px,7vw,96px) clamp(24px,6vw,48px); }
+
+    .page-tagline {
+      font-size: clamp(18px,2vw,26px);
+      font-weight: 700; color: var(--blue);
+      line-height: 1.4; margin-bottom: clamp(24px,3vw,40px);
+      border-right: 5px solid var(--yellow);
+      padding-right: 18px;
+    }
+
+    .page-intro {
+      font-size: clamp(16px,1.6vw,20px);
+      line-height: 1.9; color: #333;
+      margin-bottom: clamp(48px,6vw,80px);
+    }
+    .page-intro strong { font-weight: 800; color: var(--dark); }
+
+    .section-block { margin-bottom: clamp(40px,5vw,64px); }
+
+    .sub-title {
+      font-size: clamp(18px,1.8vw,22px);
+      font-weight: 800; color: var(--dark);
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--beige);
+    }
+
+    .body-text {
+      font-size: clamp(16px,1.6vw,20px);
+      line-height: 1.9; color: #333;
+    }
+    .body-text p { margin-bottom: 18px; }
+    .body-text p:last-child { margin-bottom: 0; }
+
+    /* ─── STEP CARDS ─────────────────────────────────────── */
+    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 8px; counter-reset: step; }
+    .step {
+      background: var(--pink); border-radius: 16px;
+      padding: 22px 18px;
+      counter-increment: step;
+      box-shadow: 0 6px 20px rgba(229,91,146,.18);
+    }
+    .step::before {
+      content: counter(step);
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #fff; color: var(--pink);
+      font-weight: 900; font-size: 20px; margin-bottom: 14px;
+    }
+    .step-title { font-size: clamp(15px,1.5vw,18px); font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .step-body  { font-size: clamp(14px,1.4vw,16px); line-height: 1.7; color: rgba(255,255,255,.94); }
+    @media (max-width: 860px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
+
+    /* ─── QUESTIONS LIST ─────────────────────────────────── */
+    .q-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .q-list li {
+      font-size: clamp(16px,1.6vw,20px); line-height: 1.7; color: #333;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .q-list li::before { content: "◀"; font-size: 10px; color: var(--blue); margin-top: 6px; flex-shrink: 0; }
+
+    /* ─── YELLOW BLOCK (audience + hours) ────────────────── */
+    .yellow-block {
+      background: var(--yellow); border-radius: 22px;
+      padding: clamp(28px,4vw,52px);
+      margin-bottom: clamp(40px,5vw,64px);
+    }
+    .yellow-block .sub-title { border-bottom-color: rgba(0,0,0,.22); }
+    .yellow-block .body-text { color: #2a2213; }
+    .yellow-block .body-text strong { color: var(--dark); font-weight: 800; }
+    .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
+    .option {
+      background: #fff; border-radius: 16px; padding: 24px 18px;
+      text-align: center; line-height: 1.5; color: #444;
+      font-size: clamp(14px,1.4vw,16px);
+      box-shadow: 0 6px 20px rgba(0,0,0,.08);
+    }
+    .option strong {
+      display: block; color: var(--blue);
+      font-size: clamp(19px,2vw,24px); font-weight: 900; margin-bottom: 8px;
+    }
+    @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
+
+    /* ─── CTA ────────────────────────────────────────────── */
+    .page-cta {
+      background: var(--blue); color: #fff;
+      border-radius: 20px; padding: clamp(36px,5vw,60px);
+      text-align: center; margin-top: clamp(48px,6vw,80px);
+    }
+    .page-cta h3 { font-size: clamp(20px,2.2vw,28px); font-weight: 900; margin-bottom: 12px; }
+    .page-cta p  { font-size: clamp(15px,1.4vw,18px); opacity: .88; margin-bottom: 28px; line-height: 1.7; }
+    .btn-cta {
+      display: inline-block; background: var(--yellow); color: var(--dark);
+      font-family: 'Heebo', sans-serif; font-size: 17px; font-weight: 800;
+      padding: 14px 42px; border-radius: 100px; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,.22); }
+
+    /* ─── MOBILE ─────────────────────────────────────────── */
+    @media (max-width: 600px) {
+      .banner { height: 52vw; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="rethinker אתר/logo rethinker.jpg" alt="ReThinker" /></a>
+    <a href="index.html#meetings" class="nav-back">← חזרה לדף הבית</a>
+  </nav>
+
+  <!-- BANNER -->
+  <div class="banner">
+    <img src="rethinker אתר/שגרירי העתיד באנר.png" alt="שגרירי העתיד" />
+    <div class="banner-overlay">
+      <h1 class="banner-title">שגרירי העתיד</h1>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <main class="page-content">
+
+    <p class="page-tagline">להפוך מחקר ורעיונות לחוויה חזותית שאפשר לראות, להבין ולשתף</p>
+
+    <p class="page-intro">
+      סדנה חווייתית המחברת בין מחקר, יצירה, עבודת צוות וחשיבה ביקורתית באמצעות כלי AI עדכניים. המשתתפים חוקרים נושאים הקשורים לטכנולוגיה, חדשנות, קיימות ואתגרי העתיד, מפתחים רעיון חדש והופכים אותו ל<strong>פרוטוטייפ ויזואלי</strong> ול<strong>סרטון פיץ׳ של דקה</strong> שמסביר את הרעיון.
+    </p>
+
+    <!-- על הסדנה -->
+    <div class="section-block">
+      <h2 class="sub-title">על הסדנה</h2>
+      <div class="body-text">
+        <p>בעולם שבו הטכנולוגיה משנה את הדרך שבה אנחנו לומדים, יוצרים ופועלים, שגרירי העתיד מציעה דרך מעשית לחבר בין מחקר, פיתוח רעיונות ותקשורת חזותית.</p>
+        <p>המשתתפים מתחילים בנושא, בשאלה או באתגר הקשורים לעולם המשתנה. המחקר יכול לעסוק בתחומים כמו קיימות, סביבה, חינוך, קהילה, טכנולוגיה, חדשנות חברתית או פתרונות חדשים לצרכים קיימים.</p>
+        <p>מתוך המחקר הם מזהים צורך או הזדמנות, מפתחים רעיון משותף ומתרגמים אותו לפרוטוטייפ ויזואלי — המחשה ראשונית שהופכת את הרעיון למשהו שאפשר לראות, להבין, לבחון, לשתף ולדייק.</p>
+        <p>לאחר מכן הם יוצרים סרטון פיץ׳ קצר של דקה, המציג את הצורך, מסביר את הרעיון וממחיש את הערך וההשפעה האפשרית שלו.</p>
+      </div>
+    </div>
+
+    <!-- מה עושים בסדנה -->
+    <div class="section-block">
+      <h2 class="sub-title">מה עושים בסדנה?</h2>
+      <p class="body-text" style="margin-bottom:20px">המשתתפים עוברים תהליך יצירתי ולימודי מלא:</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-title">חוקרים נושא</div>
+          <div class="step-body">בוחרים נושא הקשור לטכנולוגיה, חדשנות, קיימות או אתגרי העתיד, אוספים מידע, שואלים שאלות ונחשפים לנקודות מבט שונות.</div>
+        </div>
+        <div class="step">
+          <div class="step-title">מזהים צורך או הזדמנות</div>
+          <div class="step-body">מתוך המחקר מחדדים בעיה, צורך או אפשרות לשינוי, ובוחרים את הרעיון שרוצים לפתח.</div>
+        </div>
+        <div class="step">
+          <div class="step-title">מפתחים רעיון</div>
+          <div class="step-body">עובדים בקבוצה, מגבשים קונספט ומנסחים את המסר המרכזי: מהו הרעיון, למי הוא מיועד ואיזה ערך הוא יכול ליצור.</div>
+        </div>
+        <div class="step">
+          <div class="step-title">יוצרים פרוטוטייפ ויזואלי</div>
+          <div class="step-body">מתרגמים את הרעיון להמחשה ראשונית באמצעות מודל, דימוי, דמות, פוסטר, הדמיה או רצף תמונות.<br/><br/>הפרוטוטייפ אינו חייב להיות מוצר מוגמר. המטרה שלו היא להפוך רעיון מופשט למשהו שאפשר לראות, לדבר עליו, לקבל עליו משוב ולפתח אותו הלאה.</div>
+        </div>
+        <div class="step">
+          <div class="step-title">מסבירים את הרעיון בדקה</div>
+          <div class="step-body">המשתתפים בונים סרטון פיץ׳ קצר וברור, המציג את הצורך שזיהו, את הפתרון שהם מציעים, את דרך הפעולה שלו ואת הערך שהוא יכול ליצור.<br/><br/>כך הם לומדים לזקק מידע, לבנות סיפור ולהסביר רעיון מורכב בזמן קצר, בצורה חזותית וברורה.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- הערך למשתתפים -->
+    <div class="section-block">
+      <h2 class="sub-title">הערך למשתתפים</h2>
+      <div class="body-text">
+        <p>מעבר להיכרות עם כלי AI, הסדנה מפתחת מיומנויות חשובות לעולם החינוך המשתנה: חשיבה יצירתית וביקורתית, סקרנות, עבודת צוות, מחקר, פיתוח רעיון, קבלת החלטות ויכולת להעביר מסר.</p>
+        <p>הסדנה מחזקת את תחושת המסוגלות ומאפשרת לגשת לטכנולוגיה לא רק כמשתמשים, אלא כיוצרים וכמובילי תהליכי למידה.</p>
+      </div>
+    </div>
+
+    <!-- ממחקר לחוויה חזותית -->
+    <div class="section-block">
+      <h2 class="sub-title">ממחקר לחוויה חזותית</h2>
+      <div class="body-text">
+        <p>המחקר הוא נקודת הפתיחה של התהליך. המשתתפים אינם מתחילים מהכלי הטכנולוגי, אלא מנושא שמעניין אותם ומשאלה שראוי לחקור.</p>
+        <p>מתוך המידע שאספו הם מפתחים רעיון חדש והופכים אותו לפרוטוטייפ ויזואלי. ברגע שהרעיון מקבל צורה, אפשר לראות אותו, להבין אותו, לבדוק אם הוא ברור, לשאול עליו שאלות ולשפר אותו.</p>
+        <p>במובן הזה, הוויזואל אינו רק התוצר הסופי — הוא חלק מתהליך החשיבה והלמידה עצמו.</p>
+      </div>
+    </div>
+
+    <!-- מפרוטוטייפ לפיץ׳ -->
+    <div class="section-block">
+      <h2 class="sub-title">מפרוטוטייפ לפיץ׳ של דקה</h2>
+      <div class="body-text">
+        <p>לאחר שהרעיון קיבל ביטוי חזותי, המשתתפים לומדים לספר אותו בצורה קצרה ומדויקת.</p>
+        <p>הם יוצרים סרטון פיץ׳ של דקה המחבר בין המחקר, הצורך, הרעיון והפרוטוטייפ. הסרטון מאפשר להציג את הפרויקט בפני קהל ולהעביר את הידע הלאה בצורה ברורה, יצירתית ומשמעותית.</p>
+      </div>
+    </div>
+
+    <!-- למי הסדנה מתאימה + שעות -->
+    <div class="section-block yellow-block">
+      <h2 class="sub-title">למי הסדנה מתאימה?</h2>
+      <div class="body-text">
+        <p>הסדנה מתאימה למורים, מורות, סטודנטיות וסטודנטים להוראה, צוותי חינוך, מכללות להכשרת מורים, רכזי חדשנות, מדריכים פדגוגיים וארגונים חינוכיים. אין צורך בניסיון קודם — הסדנה מותאמת לקהל, לרמת הידע, למספר המשתתפים ולמטרות המסגרת.</p>
+        <p><strong>יש שלוש אפשרויות לשלב את המפגשים:</strong></p>
+      </div>
+      <div class="options">
+        <div class="option"><strong>מפגש חד־פעמי</strong>8 שעות רצופות</div>
+        <div class="option"><strong>3 מפגשים</strong>3 שעות בכל מפגש</div>
+        <div class="option"><strong>בהתאמה אישית</strong>מפגש שנבנה לפי הצרכים שלכם</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="page-cta">
+      <h3>מעוניינים לשמוע עוד?</h3>
+      <p>צרו איתנו קשר ונשמח להתאים את הסדנה לצרכים שלכם</p>
+      <a href="index.html#contact" class="btn-cta">צרו קשר</a>
+    </div>
+
+  </main>
+
+</body>
+</html>
