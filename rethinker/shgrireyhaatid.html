@@ -20,7 +20,7 @@
       --white:  #ffffff;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Heebo', sans-serif; color: var(--dark); background: var(--white); direction: rtl; }
+    body { font-family: 'Heebo', sans-serif; color: var(--dark); background: var(--white); direction: rtl; overflow-x: hidden; }
 
     /* ─── NAV ──────────────────────────────────────────── */
     nav {
@@ -31,12 +31,11 @@
       box-shadow: 0 2px 18px rgba(0,0,0,.07);
     }
     .nav-logo img { height: 40px; display: block; }
-    .nav-back {
-      display: inline-flex; align-items: center; gap: 6px;
-      color: var(--blue); font-size: 15px; font-weight: 700;
-      text-decoration: none;
-    }
-    .nav-back:hover { opacity: .75; }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--dark); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-cta { background: var(--blue) !important; color: var(--white) !important; padding: 8px 22px; border-radius: 100px; font-weight: 700 !important; }
+    .nav-cta:hover { opacity: .85; }
 
     /* ─── BANNER ────────────────────────────────────────── */
     .banner {
@@ -94,10 +93,10 @@
     /* ─── STEP CARDS ─────────────────────────────────────── */
     .steps { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; counter-reset: step; }
     .step {
-      background: var(--pink); border-radius: 16px;
+      background: var(--blue); border-radius: 16px;
       padding: 22px 76px 22px 24px;
       counter-increment: step;
-      box-shadow: 0 6px 20px rgba(229,91,146,.18);
+      box-shadow: 0 6px 20px rgba(50,79,255,.2);
       position: relative;
     }
     .step::before {
@@ -105,7 +104,7 @@
       position: absolute; top: 22px; right: 22px;
       display: flex; align-items: center; justify-content: center;
       width: 40px; height: 40px; border-radius: 50%;
-      background: #fff; color: var(--pink);
+      background: #fff; color: var(--blue);
       font-weight: 900; font-size: 20px;
     }
     .step-title { font-size: clamp(16px,1.6vw,20px); font-weight: 800; color: #fff; margin-bottom: 8px; }
@@ -119,42 +118,41 @@
     }
     .q-list li::before { content: "◀"; font-size: 10px; color: var(--blue); margin-top: 6px; flex-shrink: 0; }
 
-    /* ─── EXAMPLE VIDEOS ─────────────────────────────────── */
-    .examples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 8px; }
+    /* ─── EXAMPLE VIDEOS (9:16) ──────────────────────────── */
+    .examples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 8px; max-width: 560px; margin-inline: auto; }
     .example-video {
       border-radius: 16px; overflow: hidden; background: #000;
       box-shadow: 0 8px 28px rgba(0,0,0,.15);
     }
-    .example-video video { width: 100%; display: block; }
-    @media (max-width: 600px) { .examples { grid-template-columns: 1fr; } }
+    .example-video video { width: 100%; display: block; aspect-ratio: 9 / 16; object-fit: cover; }
+    @media (max-width: 600px) { .examples { grid-template-columns: 1fr; max-width: 300px; } }
 
-    /* ─── LIGHT PINK STRIP (about) ───────────────────────── */
-    .pink-strip {
-      background: #fbe6ef;
-      border-radius: 20px;
-      padding: clamp(28px,4vw,48px);
+    /* ─── FULL-WIDTH STRIPS (edge to edge) ───────────────── */
+    .full-strip {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: clamp(48px,6vw,80px) 8vw;
       margin-bottom: clamp(40px,5vw,64px);
     }
-    .pink-strip .sub-title { border-bottom-color: #f3c3d8; }
+    .strip-inner { max-width: 720px; margin: 0 auto; }
+    .yellow-strip { background: var(--yellow); }
+    .yellow-strip .sub-title { border-bottom-color: rgba(0,0,0,.25); }
+    .pink-strip-full { background: var(--pink); }
+    .pink-strip-full .sub-title { color: #fff; border-bottom-color: rgba(255,255,255,.4); }
+    .pink-strip-full .body-text { color: #fff; }
+    .pink-strip-full .body-text strong { color: #fff; }
 
-    /* ─── YELLOW BLOCK (audience + hours) ────────────────── */
-    .yellow-block {
-      background: var(--yellow); border-radius: 22px;
-      padding: clamp(28px,4vw,52px);
-      margin-bottom: clamp(40px,5vw,64px);
-    }
-    .yellow-block .sub-title { border-bottom-color: rgba(0,0,0,.22); }
-    .yellow-block .body-text { color: #2a2213; }
-    .yellow-block .body-text strong { color: var(--dark); font-weight: 800; }
+    /* ─── AUDIENCE OPTIONS (white on blue) ───────────────── */
     .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
     .option {
-      background: #fff; border-radius: 16px; padding: 24px 18px;
-      text-align: center; line-height: 1.5; color: #444;
+      background: var(--blue); border-radius: 16px; padding: 24px 18px;
+      text-align: center; line-height: 1.5; color: #fff;
       font-size: clamp(14px,1.4vw,16px);
-      box-shadow: 0 6px 20px rgba(0,0,0,.08);
+      box-shadow: 0 8px 24px rgba(50,79,255,.28);
     }
     .option strong {
-      display: block; color: var(--blue);
+      display: block; color: #fff;
       font-size: clamp(19px,2vw,24px); font-weight: 900; margin-bottom: 8px;
     }
     @media (max-width: 600px) { .options { grid-template-columns: 1fr; } }
@@ -202,6 +200,7 @@
 
     /* ─── MOBILE ─────────────────────────────────────────── */
     @media (max-width: 768px) {
+      .nav-links { display: none; }
       .footer-bottom { flex-direction: column; align-items: center; }
     }
     @media (max-width: 600px) {
@@ -214,7 +213,13 @@
   <!-- NAV -->
   <nav>
     <a href="index.html" class="nav-logo"><img src="rethinker אתר/logo rethinker.jpg" alt="ReThinker" /></a>
-    <a href="index.html#meetings" class="nav-back">← חזרה לדף הבית</a>
+    <ul class="nav-links">
+      <li><a href="index.html#learning">מרחבי הלמידה</a></li>
+      <li><a href="index.html#values">איך זה קורה</a></li>
+      <li><a href="index.html#meetings">המפגשים</a></li>
+      <li><a href="index.html#testimonials">המלצות</a></li>
+      <li><a href="#contact" class="nav-cta">צרו קשר</a></li>
+    </ul>
   </nav>
 
   <!-- BANNER -->
@@ -235,13 +240,15 @@
     </p>
 
     <!-- על הסדנה -->
-    <div class="section-block pink-strip">
-      <h2 class="sub-title">על הסדנה</h2>
-      <div class="body-text">
-        <p>בעולם שבו הטכנולוגיה משנה את הדרך שבה אנחנו לומדים, יוצרים ופועלים, שגרירי העתיד מציעה דרך מעשית לחבר בין מחקר, פיתוח רעיונות ותקשורת חזותית.</p>
-        <p>המשתתפים מתחילים בנושא, בשאלה או באתגר הקשורים לעולם המשתנה. המחקר יכול לעסוק בתחומים כמו קיימות, סביבה, חינוך, קהילה, טכנולוגיה, חדשנות חברתית או פתרונות חדשים לצרכים קיימים.</p>
-        <p>מתוך המחקר הם מזהים צורך או הזדמנות, מפתחים רעיון משותף ומתרגמים אותו לפרוטוטייפ ויזואלי — המחשה ראשונית שהופכת את הרעיון למשהו שאפשר לראות, להבין, לבחון, לשתף ולדייק.</p>
-        <p>לאחר מכן הם יוצרים סרטון פיץ׳ קצר של דקה, המציג את הצורך, מסביר את הרעיון וממחיש את הערך וההשפעה האפשרית שלו.</p>
+    <div class="full-strip yellow-strip">
+      <div class="strip-inner">
+        <h2 class="sub-title">על הסדנה</h2>
+        <div class="body-text">
+          <p>בעולם שבו הטכנולוגיה משנה את הדרך שבה אנחנו לומדים, יוצרים ופועלים, שגרירי העתיד מציעה דרך מעשית לחבר בין מחקר, פיתוח רעיונות ותקשורת חזותית.</p>
+          <p>המשתתפים מתחילים בנושא, בשאלה או באתגר הקשורים לעולם המשתנה. המחקר יכול לעסוק בתחומים כמו קיימות, סביבה, חינוך, קהילה, טכנולוגיה, חדשנות חברתית או פתרונות חדשים לצרכים קיימים.</p>
+          <p>מתוך המחקר הם מזהים צורך או הזדמנות, מפתחים רעיון משותף ומתרגמים אותו לפרוטוטייפ ויזואלי — המחשה ראשונית שהופכת את הרעיון למשהו שאפשר לראות, להבין, לבחון, לשתף ולדייק.</p>
+          <p>לאחר מכן הם יוצרים סרטון פיץ׳ קצר של דקה, המציג את הצורך, מסביר את הרעיון וממחיש את הערך וההשפעה האפשרית שלו.</p>
+        </div>
       </div>
     </div>
 
@@ -296,16 +303,18 @@
     </div>
 
     <!-- למי הסדנה מתאימה + שעות -->
-    <div class="section-block yellow-block">
-      <h2 class="sub-title">למי הסדנה מתאימה?</h2>
-      <div class="body-text">
-        <p>הסדנה מתאימה למורים, מורות, סטודנטיות וסטודנטים להוראה, צוותי חינוך, מכללות להכשרת מורים, רכזי חדשנות, מדריכים פדגוגיים וארגונים חינוכיים. אין צורך בניסיון קודם — הסדנה מותאמת לקהל, לרמת הידע, למספר המשתתפים ולמטרות המסגרת.</p>
-        <p><strong>יש שלוש אפשרויות לשלב את המפגשים:</strong></p>
-      </div>
-      <div class="options">
-        <div class="option"><strong>מפגש חד־פעמי</strong>8 שעות רצופות</div>
-        <div class="option"><strong>3 מפגשים</strong>3 שעות בכל מפגש</div>
-        <div class="option"><strong>בהתאמה אישית</strong>מפגש שנבנה לפי הצרכים שלכם</div>
+    <div class="full-strip pink-strip-full">
+      <div class="strip-inner">
+        <h2 class="sub-title">למי הסדנה מתאימה?</h2>
+        <div class="body-text">
+          <p>הסדנה מתאימה למורים, מורות, סטודנטיות וסטודנטים להוראה, צוותי חינוך, מכללות להכשרת מורים, רכזי חדשנות, מדריכים פדגוגיים וארגונים חינוכיים. אין צורך בניסיון קודם — הסדנה מותאמת לקהל, לרמת הידע, למספר המשתתפים ולמטרות המסגרת.</p>
+          <p><strong>יש שלוש אפשרויות לשלב את המפגשים:</strong></p>
+        </div>
+        <div class="options">
+          <div class="option"><strong>מפגש חד־פעמי</strong>8 שעות רצופות</div>
+          <div class="option"><strong>3 מפגשים</strong>3 שעות בכל מפגש</div>
+          <div class="option"><strong>בהתאמה אישית</strong>מפגש שנבנה לפי הצרכים שלכם</div>
+        </div>
       </div>
     </div>
 
