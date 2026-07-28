@@ -56,7 +56,7 @@
     }
 
     /* ─── CONTENT ───────────────────────────────────────── */
-    .page-content { max-width: 820px; margin: 0 auto; padding: clamp(48px,7vw,96px) clamp(24px,6vw,48px); }
+    .page-content { max-width: 820px; margin: 0 auto; padding: clamp(48px,7vw,96px) clamp(24px,6vw,48px) 0; }
 
     .page-tagline {
       font-size: clamp(18px,2vw,26px);
@@ -138,10 +138,10 @@
     .strip-inner { max-width: 720px; margin: 0 auto; }
     .yellow-strip { background: var(--yellow); }
     .yellow-strip .sub-title { border-bottom-color: rgba(0,0,0,.25); }
-    .pink-strip-full { background: var(--pink); }
-    .pink-strip-full .sub-title { color: #fff; border-bottom-color: rgba(255,255,255,.4); }
-    .pink-strip-full .body-text { color: #fff; }
-    .pink-strip-full .body-text strong { color: #fff; }
+    .pink-strip-full { background: #ffc1d9; margin-bottom: 0; }
+    .pink-strip-full .sub-title { color: var(--dark); border-bottom-color: rgba(0,0,0,.18); }
+    .pink-strip-full .body-text { color: #3a2430; }
+    .pink-strip-full .body-text strong { color: var(--dark); }
 
     /* ─── AUDIENCE OPTIONS (white on blue) ───────────────── */
     .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 22px; }
