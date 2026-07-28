@@ -92,24 +92,24 @@
     .body-text p:last-child { margin-bottom: 0; }
 
     /* ─── STEP CARDS ─────────────────────────────────────── */
-    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 8px; counter-reset: step; }
+    .steps { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; counter-reset: step; }
     .step {
       background: var(--pink); border-radius: 16px;
-      padding: 22px 18px;
+      padding: 22px 76px 22px 24px;
       counter-increment: step;
       box-shadow: 0 6px 20px rgba(229,91,146,.18);
+      position: relative;
     }
     .step::before {
       content: counter(step);
+      position: absolute; top: 22px; right: 22px;
       display: flex; align-items: center; justify-content: center;
       width: 40px; height: 40px; border-radius: 50%;
       background: #fff; color: var(--pink);
-      font-weight: 900; font-size: 20px; margin-bottom: 14px;
+      font-weight: 900; font-size: 20px;
     }
-    .step-title { font-size: clamp(15px,1.5vw,18px); font-weight: 800; color: #fff; margin-bottom: 8px; }
-    .step-body  { font-size: clamp(14px,1.4vw,16px); line-height: 1.7; color: rgba(255,255,255,.94); }
-    @media (max-width: 860px) { .steps { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
+    .step-title { font-size: clamp(16px,1.6vw,20px); font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .step-body  { font-size: clamp(15px,1.5vw,18px); line-height: 1.8; color: rgba(255,255,255,.94); }
 
     /* ─── QUESTIONS LIST ─────────────────────────────────── */
     .q-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
@@ -127,6 +127,15 @@
     }
     .example-video video { width: 100%; display: block; }
     @media (max-width: 600px) { .examples { grid-template-columns: 1fr; } }
+
+    /* ─── LIGHT PINK STRIP (about) ───────────────────────── */
+    .pink-strip {
+      background: #fbe6ef;
+      border-radius: 20px;
+      padding: clamp(28px,4vw,48px);
+      margin-bottom: clamp(40px,5vw,64px);
+    }
+    .pink-strip .sub-title { border-bottom-color: #f3c3d8; }
 
     /* ─── YELLOW BLOCK (audience + hours) ────────────────── */
     .yellow-block {
@@ -226,7 +235,7 @@
     </p>
 
     <!-- על הסדנה -->
-    <div class="section-block">
+    <div class="section-block pink-strip">
       <h2 class="sub-title">על הסדנה</h2>
       <div class="body-text">
         <p>בעולם שבו הטכנולוגיה משנה את הדרך שבה אנחנו לומדים, יוצרים ופועלים, שגרירי העתיד מציעה דרך מעשית לחבר בין מחקר, פיתוח רעיונות ותקשורת חזותית.</p>
@@ -280,25 +289,9 @@
       <div class="body-text">
         <p>מעבר להיכרות עם כלי AI, הסדנה מפתחת מיומנויות חשובות לעולם החינוך המשתנה: חשיבה יצירתית וביקורתית, סקרנות, עבודת צוות, מחקר, פיתוח רעיון, קבלת החלטות ויכולת להעביר מסר.</p>
         <p>הסדנה מחזקת את תחושת המסוגלות ומאפשרת לגשת לטכנולוגיה לא רק כמשתמשים, אלא כיוצרים וכמובילי תהליכי למידה.</p>
-      </div>
-    </div>
-
-    <!-- ממחקר לחוויה חזותית -->
-    <div class="section-block">
-      <h2 class="sub-title">ממחקר לחוויה חזותית</h2>
-      <div class="body-text">
         <p>המחקר הוא נקודת הפתיחה של התהליך. המשתתפים אינם מתחילים מהכלי הטכנולוגי, אלא מנושא שמעניין אותם ומשאלה שראוי לחקור.</p>
         <p>מתוך המידע שאספו הם מפתחים רעיון חדש והופכים אותו לפרוטוטייפ ויזואלי. ברגע שהרעיון מקבל צורה, אפשר לראות אותו, להבין אותו, לבדוק אם הוא ברור, לשאול עליו שאלות ולשפר אותו.</p>
         <p>במובן הזה, הוויזואל אינו רק התוצר הסופי — הוא חלק מתהליך החשיבה והלמידה עצמו.</p>
-      </div>
-    </div>
-
-    <!-- מפרוטוטייפ לפיץ׳ -->
-    <div class="section-block">
-      <h2 class="sub-title">מפרוטוטייפ לפיץ׳ של דקה</h2>
-      <div class="body-text">
-        <p>לאחר שהרעיון קיבל ביטוי חזותי, המשתתפים לומדים לספר אותו בצורה קצרה ומדויקת.</p>
-        <p>הם יוצרים סרטון פיץ׳ של דקה המחבר בין המחקר, הצורך, הרעיון והפרוטוטייפ. הסרטון מאפשר להציג את הפרויקט בפני קהל ולהעביר את הידע הלאה בצורה ברורה, יצירתית ומשמעותית.</p>
       </div>
     </div>
 
