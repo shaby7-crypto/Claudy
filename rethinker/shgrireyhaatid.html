@@ -119,6 +119,15 @@
     }
     .q-list li::before { content: "◀"; font-size: 10px; color: var(--blue); margin-top: 6px; flex-shrink: 0; }
 
+    /* ─── EXAMPLE VIDEOS ─────────────────────────────────── */
+    .examples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 8px; }
+    .example-video {
+      border-radius: 16px; overflow: hidden; background: #000;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+    }
+    .example-video video { width: 100%; display: block; }
+    @media (max-width: 600px) { .examples { grid-template-columns: 1fr; } }
+
     /* ─── YELLOW BLOCK (audience + hours) ────────────────── */
     .yellow-block {
       background: var(--yellow); border-radius: 22px;
@@ -224,6 +233,16 @@
           <div class="step-title">מסבירים את הרעיון בדקה</div>
           <div class="step-body">המשתתפים בונים סרטון פיץ׳ קצר וברור, המציג את הצורך שזיהו, את הפתרון שהם מציעים, את דרך הפעולה שלו ואת הערך שהוא יכול ליצור.<br/><br/>כך הם לומדים לזקק מידע, לבנות סיפור ולהסביר רעיון מורכב בזמן קצר, בצורה חזותית וברורה.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- דוגמאות לסרטים -->
+    <div class="section-block">
+      <h2 class="sub-title">דוגמאות לסרטונים</h2>
+      <p class="body-text" style="margin-bottom:20px">שני סרטוני פיץ׳ לדוגמה שנוצרו בסדנה:</p>
+      <div class="examples">
+        <div class="example-video"><video src="rethinker אתר/שגרירי העתיד_1.mp4" controls playsinline preload="metadata"></video></div>
+        <div class="example-video"><video src="rethinker אתר/שגרירי העתיד_2.mp4" controls playsinline preload="metadata"></video></div>
       </div>
     </div>
 
