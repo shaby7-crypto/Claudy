@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>שאלון קורס Seed of Potential – ReThinker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:   #324fff;
+      --yellow: #f3b141;
+      --teal:   #5ad3ac;
+      --pink:   #e55b92;
+      --orange: #e76f10;
+      --beige:  #eacec7;
+      --dark:   #111111;
+      --white:  #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Heebo', sans-serif; color: var(--dark); background: #f6f5f2; direction: rtl; overflow-x: hidden; }
+
+    /* ─── NAV ──────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 6vw;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      box-shadow: 0 2px 18px rgba(0,0,0,.07);
+    }
+    .nav-logo img { height: 40px; display: block; }
+    .nav-links { display: flex; gap: 1.6rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 15px; font-weight: 500; color: var(--dark); text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--blue); }
+    .nav-cta { background: var(--blue) !important; color: var(--white) !important; padding: 8px 22px; border-radius: 100px; font-weight: 700 !important; }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ─── HERO ──────────────────────────────────────────── */
+    .form-hero {
+      margin-top: 72px;
+      background: var(--blue);
+      padding: clamp(48px,7vw,96px) 8vw clamp(56px,8vw,104px);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .form-hero::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 48px;
+      background: #f6f5f2; border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+    .form-hero .eyebrow {
+      font-family: 'Poppins', sans-serif; font-weight: 800;
+      letter-spacing: 2px; text-transform: uppercase;
+      font-size: clamp(13px,1.4vw,16px); color: var(--yellow); margin-bottom: 14px;
+    }
+    .form-hero h1 {
+      font-size: clamp(30px,5vw,58px); font-weight: 900; color: #fff;
+      line-height: 1.12; margin-bottom: 18px;
+    }
+    .form-hero p {
+      max-width: 640px; margin: 0 auto;
+      font-size: clamp(15px,1.6vw,19px); line-height: 1.8; color: rgba(255,255,255,.9);
+    }
+
+    /* ─── FORM WRAPPER ──────────────────────────────────── */
+    .form-wrap { max-width: 760px; margin: 0 auto; padding: clamp(8px,2vw,24px) clamp(18px,5vw,32px) clamp(56px,7vw,88px); }
+    .form-note {
+      background: #fff7e9; border-right: 5px solid var(--yellow);
+      border-radius: 12px; padding: 16px 20px; margin-bottom: 32px;
+      font-size: clamp(14px,1.4vw,16px); line-height: 1.7; color: #6b5320;
+    }
+    .form-note strong { font-weight: 800; color: var(--dark); }
+
+    form.survey { display: flex; flex-direction: column; gap: 22px; }
+
+    /* ─── QUESTION CARD ─────────────────────────────────── */
+    .q-card {
+      background: #fff; border-radius: 18px;
+      padding: clamp(22px,3vw,32px);
+      box-shadow: 0 4px 24px rgba(17,17,17,.06);
+      border: 1px solid rgba(17,17,17,.05);
+    }
+    .q-card > label.q-label,
+    .q-card > .q-label {
+      display: block; font-size: clamp(16px,1.7vw,20px); font-weight: 800;
+      color: var(--dark); line-height: 1.5; margin-bottom: 6px;
+    }
+    .q-num { color: var(--blue); font-weight: 900; margin-left: 6px; }
+    .req { color: var(--pink); font-weight: 900; }
+    .q-hint { font-size: clamp(13px,1.3vw,15px); color: #888; margin-bottom: 16px; line-height: 1.6; }
+
+    /* ─── TEXT INPUTS ───────────────────────────────────── */
+    .q-card input[type="text"],
+    .q-card input[type="email"],
+    .q-card input[type="tel"],
+    .q-card input[type="number"],
+    .q-card select,
+    .q-card textarea {
+      width: 100%; font-family: 'Heebo', sans-serif; font-size: 16px;
+      padding: 13px 18px; border: 2px solid #e4e2dd; border-radius: 12px;
+      background: #fafaf8; color: var(--dark); outline: none;
+      text-align: right; transition: border-color .2s, background .2s; resize: none;
+    }
+    .q-card textarea { min-height: 120px; line-height: 1.7; }
+    .q-card input::placeholder, .q-card textarea::placeholder { color: #b3b0a8; }
+    .q-card input:focus, .q-card select:focus, .q-card textarea:focus {
+      border-color: var(--blue); background: #fff;
+    }
+    .q-card select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23324fff' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: left 16px center; padding-left: 42px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 8px; }
+    .field label { font-size: 14px; font-weight: 700; color: #444; }
+
+    /* ─── CHOICE OPTIONS (radio / checkbox) ─────────────── */
+    .options-list { display: flex; flex-direction: column; gap: 10px; }
+    .opt {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px; border: 2px solid #e4e2dd; border-radius: 12px;
+      cursor: pointer; transition: border-color .18s, background .18s;
+      font-size: clamp(15px,1.5vw,17px); color: #333;
+    }
+    .opt:hover { border-color: #c7d0ff; background: #f7f8ff; }
+    .opt input { accent-color: var(--blue); width: 19px; height: 19px; flex-shrink: 0; cursor: pointer; }
+    .opt:has(input:checked) { border-color: var(--blue); background: #f0f3ff; font-weight: 700; color: var(--dark); }
+
+    /* ─── SCALE (1–5) ───────────────────────────────────── */
+    .scale { display: flex; gap: 8px; flex-wrap: wrap; }
+    .scale label {
+      flex: 1; min-width: 56px; text-align: center; cursor: pointer;
+      border: 2px solid #e4e2dd; border-radius: 12px; padding: 14px 6px;
+      font-weight: 800; font-size: 18px; color: #555;
+      transition: border-color .18s, background .18s, color .18s;
+    }
+    .scale label:hover { border-color: #c7d0ff; }
+    .scale input { position: absolute; opacity: 0; pointer-events: none; }
+    .scale label:has(input:checked) { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .scale-caption { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; color: #999; }
+
+    /* ─── SUBMIT ────────────────────────────────────────── */
+    .form-actions { text-align: center; margin-top: 10px; }
+    .btn-submit {
+      font-family: 'Heebo', sans-serif; font-size: 18px; font-weight: 800;
+      background: var(--blue); color: #fff; border: none;
+      padding: 16px 56px; border-radius: 100px; cursor: pointer;
+      transition: transform .2s, box-shadow .2s; box-shadow: 0 8px 26px rgba(50,79,255,.3);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 34px rgba(50,79,255,.4); }
+    .privacy-line { margin-top: 16px; font-size: 13px; color: #999; }
+
+    .form-success {
+      display: none; text-align: center;
+      background: #fff; border-radius: 20px; padding: clamp(40px,6vw,64px);
+      box-shadow: 0 6px 30px rgba(17,17,17,.08);
+    }
+    .form-success .check {
+      width: 76px; height: 76px; margin: 0 auto 22px; border-radius: 50%;
+      background: var(--teal); display: flex; align-items: center; justify-content: center;
+      font-size: 40px; color: #fff;
+    }
+    .form-success h2 { font-size: clamp(24px,3vw,34px); font-weight: 900; margin-bottom: 12px; color: var(--dark); }
+    .form-success p { font-size: clamp(15px,1.5vw,18px); color: #555; line-height: 1.8; max-width: 460px; margin: 0 auto 28px; }
+    .form-success a {
+      display: inline-block; background: var(--yellow); color: var(--dark);
+      font-weight: 800; font-size: 16px; padding: 13px 38px; border-radius: 100px;
+      text-decoration: none; transition: transform .2s;
+    }
+    .form-success a:hover { transform: translateY(-2px); }
+
+    /* ─── FOOTER ────────────────────────────────────────── */
+    .footer-logo-bar { background: var(--dark); padding: 28px 8vw; display: flex; align-items: center; justify-content: center; }
+    .footer-logo-bar img { height: 44px; display: block; }
+    .mini-footer { background: var(--dark); text-align: center; padding: 0 8vw 26px; }
+    .mini-footer span { font-size: 13px; color: rgba(255,255,255,.5); }
+
+    @media (max-width: 768px) { .nav-links { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo"><img src="rethinker אתר/logo rethinker.jpg" alt="ReThinker" /></a>
+    <ul class="nav-links">
+      <li><a href="index.html#learning">מרחבי הלמידה</a></li>
+      <li><a href="index.html#values">איך זה קורה</a></li>
+      <li><a href="index.html#meetings">המפגשים</a></li>
+      <li><a href="index.html#testimonials">המלצות</a></li>
+      <li><a href="index.html#contact" class="nav-cta">צרו קשר</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <header class="form-hero">
+    <div class="eyebrow">Seed of Potential</div>
+    <h1>שאלון הצטרפות לקורס<br/>זרע של פוטנציאל</h1>
+    <p>לפני שנצא לדרך, נשמח להכיר אתכם קצת יותר. השאלון הקצר הזה עוזר לנו להתאים את הקורס לרקע, למטרות ולציפיות שלכם — כדי שהמסע יהיה משמעותי באמת. מילוי אורך כ־5 דקות.</p>
+  </header>
+
+  <!-- FORM -->
+  <main class="form-wrap">
+
+    <div class="form-note" id="intro-note">
+      <strong>שדות המסומנים ב־<span class="req">*</span> הם חובה.</strong> כל שאר השאלות פתוחות לבחירתכם — ככל שתשתפו יותר, כך נוכל להתאים לכם טוב יותר.
+    </div>
+
+    <form class="survey" name="seed-of-potential" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="form-name" value="seed-of-potential" />
+      <p hidden><label>אל תמלאו: <input name="bot-field" /></label></p>
+
+      <!-- 1 – פרטים אישיים -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">1.</span> פרטים אישיים <span class="req">*</span></span>
+        <p class="q-hint">כדי שנוכל לחזור אליכם ולשריין את מקומכם בקורס.</p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="name">שם מלא</label>
+            <input type="text" id="name" name="שם מלא" dir="rtl" required />
+          </div>
+          <div class="field">
+            <label for="email">כתובת אימייל</label>
+            <input type="email" id="email" name="אימייל" dir="rtl" required />
+          </div>
+          <div class="field">
+            <label for="phone">טלפון</label>
+            <input type="tel" id="phone" name="טלפון" dir="rtl" required />
+          </div>
+          <div class="field">
+            <label for="age">גיל</label>
+            <input type="number" id="age" name="גיל" min="10" max="120" dir="rtl" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 – עיסוק -->
+      <div class="q-card">
+        <label class="q-label" for="role"><span class="q-num">2.</span> מה התחום או העיסוק שלכם? <span class="req">*</span></label>
+        <p class="q-hint">למשל: מורה, סטודנט/ית, מנהל/ת, יזם/ית, אמן/ית, בעל/ת מקצוע חופשי.</p>
+        <input type="text" id="role" name="תחום או עיסוק" placeholder="הקלידו כאן…" dir="rtl" required />
+      </div>
+
+      <!-- 3 – איך שמעתם -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">3.</span> איך שמעתם על הקורס?</span>
+        <div class="options-list">
+          <label class="opt"><input type="radio" name="איך שמעתם" value="חבר/ה או המלצה" /> חבר/ה או המלצה אישית</label>
+          <label class="opt"><input type="radio" name="איך שמעתם" value="רשתות חברתיות" /> רשתות חברתיות (אינסטגרם / פייסבוק / טיקטוק)</label>
+          <label class="opt"><input type="radio" name="איך שמעתם" value="אתר ReThinker" /> אתר ReThinker</label>
+          <label class="opt"><input type="radio" name="איך שמעתם" value="סדנה או הרצאה" /> סדנה או הרצאה קודמת</label>
+          <label class="opt"><input type="radio" name="איך שמעתם" value="אחר" /> אחר</label>
+        </div>
+      </div>
+
+      <!-- 4 – ניסיון קודם עם AI -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">4.</span> מהי רמת ההיכרות שלכם עם כלי בינה מלאכותית? <span class="req">*</span></span>
+        <div class="options-list">
+          <label class="opt"><input type="radio" name="רמת היכרות עם AI" value="מתחיל/ה" required /> מתחיל/ה — כמעט ולא השתמשתי</label>
+          <label class="opt"><input type="radio" name="רמת היכרות עם AI" value="בסיסי" /> בסיסי — התנסיתי מדי פעם</label>
+          <label class="opt"><input type="radio" name="רמת היכרות עם AI" value="בינוני" /> בינוני — משתמש/ת באופן קבוע</label>
+          <label class="opt"><input type="radio" name="רמת היכרות עם AI" value="מתקדם" /> מתקדם/ת — מרגיש/ה בנוח עם מגוון כלים</label>
+        </div>
+      </div>
+
+      <!-- 5 – מה מושך אתכם (checkbox) -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">5.</span> מה מושך אתכם בקורס? <span class="req">*</span></span>
+        <p class="q-hint">אפשר לבחור יותר מתשובה אחת.</p>
+        <div class="options-list">
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="פיתוח יצירתיות" /> פיתוח חשיבה יצירתית</label>
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="למידת כלי AI" /> למידה מעשית של כלי בינה מלאכותית</label>
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="מימוש פוטנציאל אישי" /> מימוש פוטנציאל אישי וגילוי כיוונים חדשים</label>
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="יצירת תוצר" /> יצירת פרויקט או תוצר משלי</label>
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="קהילה והשראה" /> קהילה, השראה ומפגש עם אנשים</label>
+          <label class="opt"><input type="checkbox" name="מה מושך[]" value="פיתוח מקצועי" /> פיתוח מקצועי וקידום בקריירה</label>
+        </div>
+      </div>
+
+      <!-- 6 – מטרה אישית (textarea) -->
+      <div class="q-card">
+        <label class="q-label" for="goal"><span class="q-num">6.</span> מהי המטרה או השאיפה המרכזית שאיתה אתם מגיעים? <span class="req">*</span></label>
+        <p class="q-hint">ספרו לנו במילים שלכם — מה תרצו לקחת איתכם בסוף הקורס?</p>
+        <textarea id="goal" name="מטרה מרכזית" placeholder="לדוגמה: לגלות דרכים חדשות לבטא את הרעיונות שלי…" dir="rtl" required></textarea>
+      </div>
+
+      <!-- 7 – סקאלת ביטחון -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">7.</span> עד כמה אתם מרגישים בטוחים ביכולת שלכם ליצור ולחדש כיום? <span class="req">*</span></span>
+        <p class="q-hint">1 = עדיין מחפש/ת ביטחון · 5 = מרגיש/ה בנוח מאוד.</p>
+        <div class="scale">
+          <label>1<input type="radio" name="רמת ביטחון" value="1" required /></label>
+          <label>2<input type="radio" name="רמת ביטחון" value="2" /></label>
+          <label>3<input type="radio" name="רמת ביטחון" value="3" /></label>
+          <label>4<input type="radio" name="רמת ביטחון" value="4" /></label>
+          <label>5<input type="radio" name="רמת ביטחון" value="5" /></label>
+        </div>
+        <div class="scale-caption"><span>מחפש/ת ביטחון</span><span>בנוח מאוד</span></div>
+      </div>
+
+      <!-- 8 – פורמט מועדף -->
+      <div class="q-card">
+        <label class="q-label" for="format"><span class="q-num">8.</span> איזה פורמט למידה מתאים לכם ביותר?</label>
+        <select id="format" name="פורמט מועדף">
+          <option value="" selected disabled>בחרו אפשרות…</option>
+          <option value="מפגשים פרונטליים">מפגשים פרונטליים</option>
+          <option value="מפגשים מקוונים">מפגשים מקוונים (זום)</option>
+          <option value="שילוב היברידי">שילוב היברידי — פרונטלי ומקוון</option>
+          <option value="גמיש">גמיש, מתאים לי הכל</option>
+        </select>
+      </div>
+
+      <!-- 9 – זמינות -->
+      <div class="q-card">
+        <span class="q-label"><span class="q-num">9.</span> מתי נוח לכם ביותר להשתתף?</span>
+        <div class="options-list">
+          <label class="opt"><input type="checkbox" name="זמינות[]" value="בקרים באמצע השבוע" /> בקרים באמצע השבוע</label>
+          <label class="opt"><input type="checkbox" name="זמינות[]" value="אחר הצהריים / ערב" /> אחר הצהריים / ערב</label>
+          <label class="opt"><input type="checkbox" name="זמינות[]" value="סופי שבוע" /> סופי שבוע</label>
+        </div>
+      </div>
+
+      <!-- 10 – הערות -->
+      <div class="q-card">
+        <label class="q-label" for="notes"><span class="q-num">10.</span> משהו נוסף שחשוב שנדע?</label>
+        <p class="q-hint">שאלה, בקשה, ציפייה או כל דבר שתרצו לשתף — אנחנו כאן וקשובים.</p>
+        <textarea id="notes" name="הערות נוספות" placeholder="כתבו לנו…" dir="rtl"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">שליחת השאלון</button>
+        <p class="privacy-line">הפרטים נשמרים אצלנו בלבד וישמשו להתאמת הקורס. לא נעביר אותם לגורם שלישי.</p>
+      </div>
+    </form>
+
+    <!-- SUCCESS -->
+    <div class="form-success" id="form-success">
+      <div class="check">✓</div>
+      <h2>תודה ששיתפתם!</h2>
+      <p>קיבלנו את השאלון שלכם. הצוות של ReThinker יעבור על התשובות ויחזור אליכם עם הפרטים הבאים להצטרפות לקורס <strong>Seed of Potential</strong>.</p>
+      <a href="index.html">חזרה לדף הבית</a>
+    </div>
+
+  </main>
+
+  <!-- LOGO BAR -->
+  <div class="footer-logo-bar">
+    <img src="rethinker אתר/לוגו שקוף.png" alt="ReThinker" />
+  </div>
+  <div class="mini-footer">
+    <span>© 2025 ReThinker. כל הזכויות שמורות.</span>
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = new FormData(form);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString()
+      })
+        .then(showSuccess)
+        .catch(showSuccess);
+    }
+    function showSuccess() {
+      document.querySelector('form.survey').style.display = 'none';
+      document.getElementById('intro-note').style.display = 'none';
+      const box = document.getElementById('form-success');
+      box.style.display = 'block';
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+
+</body>
+</html>
