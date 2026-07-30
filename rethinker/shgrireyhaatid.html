@@ -126,6 +126,10 @@
     }
     .example-video video { width: 100%; display: block; aspect-ratio: 9 / 16; object-fit: cover; }
     @media (max-width: 600px) { .examples { grid-template-columns: 1fr; max-width: 300px; } }
+    /* ─── COLLAB CREDIT ──────────────────────────────────── */
+    .collab { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+    .collab img { height: 58px; width: auto; display: block; }
+    .collab span { font-size: clamp(15px,1.6vw,19px); font-weight: 700; color: var(--dark); }
 
     /* ─── FULL-WIDTH STRIPS (edge to edge) ───────────────── */
     .full-strip {
@@ -285,6 +289,10 @@
       <div class="examples">
         <div class="example-video"><video src="rethinker אתר/שגרירי העתיד_1.mp4#t=0.1" controls playsinline preload="metadata"></video></div>
         <div class="example-video"><video src="rethinker אתר/שגרירי העתיד_2.mp4#t=0.1" controls playsinline preload="metadata"></video></div>
+      </div>
+      <div class="collab">
+        <img src="rethinker אתר/לוגו עיריית יבנה.png" alt="עיריית יבנה" />
+        <span>שיתוף פעולה עם עיריית יבנה</span>
       </div>
     </div>
 
