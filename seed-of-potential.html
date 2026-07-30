@@ -521,7 +521,7 @@
 
   <script>
     const questions = [
-      { kicker: "חזרה לרגע", title: "מתי הרגשתי שאני בדיוק במקום שלי?", prompt: "חשבי על רגע שבו הרגשת חיבור, חיות או משמעות.\\nמה קרה שם? מה עשית? ומה בך קיבל מקום?" },
+      { kicker: "חזרה לרגע", title: "מתי הרגשתי שאני בדיוק במקום שלי?", prompt: "חשבי על רגע שבו הרגשת חיבור, חיות או משמעות.\nמה קרה שם? מה עשית? ומה קיבל מקום?" },
       { kicker: "חזרה למקור", title: "מה היה טבעי לי בילדות?", prompt: "מה אהבת לעשות, לחקור או לדמיין, לפני ששאלת אם זה נכון, שימושי או מעשי?" },
       { kicker: "החוט המחבר", title: "מה חוזר לאורך הדרך שלי?", prompt: "כשאת מסתכלת על רגעים, קשרים ופרויקטים משמעותיים בחייך, איזו איכות, משיכה או דרך הסתכלות חוזרת שוב ושוב?" },
       { kicker: "מקורות הכוח", title: "מה מחזיר אותי אליי?", prompt: "מה מחבר אותך לאמונה, לסקרנות, לשקט, ליצירתיות או לתחושת האפשרות שבך?" },
@@ -580,10 +580,10 @@
 
     function summaryText() {
       const rows = questions.map((q, i) =>
-        `${String(i + 1).padStart(2, "0")}. ${q.title}\\n${state.answers[i] || "לא נכתבה תשובה"}`
+        `${String(i + 1).padStart(2, "0")}. ${q.title}\n${state.answers[i] || "לא נכתבה תשובה"}`
       );
-      const play = state.playAnswer ? `\\n\\n07. LET’S PLAY\\n${state.playAnswer}` : "";
-      return `הדרך חזרה אליי\\nסיכום אישי\\n\\n${rows.join("\\n\\n")}${play}\\n\\nSeeds of Potential · Sharon Mass`;
+      const play = state.playAnswer ? `\n\n07. LET’S PLAY\n${state.playAnswer}` : "";
+      return `הדרך חזרה אליי\nסיכום אישי\n\n${rows.join("\n\n")}${play}\n\nSeeds of Potential · Sharon Mass`;
     }
 
     function renderSummary() {
