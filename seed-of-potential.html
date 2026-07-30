@@ -118,17 +118,6 @@
       line-height: 1.65;
     }
 
-    .intro-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 30px;
-      margin: 34px 0;
-      padding: 20px 0;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      font-size: 14px;
-    }
-
     .video-frame {
       position: relative;
       aspect-ratio: 1 / 1;
@@ -155,21 +144,6 @@
       display: block;
       object-fit: cover;
       border-radius: 50%;
-    }
-
-    .sound-toggle {
-      position: absolute;
-      z-index: 2;
-      left: 12%;
-      bottom: 11%;
-      min-height: 42px;
-      padding: 9px 16px;
-      border: 1px solid rgba(255,255,255,.72);
-      border-radius: 999px;
-      background: rgba(21,21,21,.42);
-      backdrop-filter: blur(8px);
-      color: white;
-      cursor: pointer;
     }
 
     .btn-row {
@@ -432,26 +406,19 @@
   <div class="shell">
     <header>
       <div class="brand">Seeds of Potential<small>by Sharon Mass</small></div>
-      <div class="header-note">שאלון אישי · כ־20 דקות · התשובות נשמרות בדפדפן</div>
     </header>
 
     <main>
       <section id="intro" class="screen active">
         <div class="hero">
           <div>
-            <p class="eyebrow">Let’s play · מסע אישי</p>
+            <p class="eyebrow">שאלון אישי · כ־20 דקות</p>
             <h1>הדרך<br>חזרה אליי</h1>
             <p class="hero-copy">
-              שאלון אישי לחיבור למהות, למקורות הכוח ולרעיון שמבקש לצאת לעולם.
-              לא צריך לדעת מראש לאן מגיעים. רק לעצור, להקשיב ולכתוב את מה שעולה.
+              שאלון אישי לחיבור למהות. רק לעצור, להקשיב ולכתוב את מה שעולה.
             </p>
-            <div class="intro-meta">
-              <span>6 שאלות</span>
-              <span>שאלה אחת בכל פעם</span>
-              <span>סיכום אישי ואז LET’S PLAY</span>
-            </div>
             <div class="btn-row">
-              <button class="btn primary" id="startBtn">מתחילות בדרך ←</button>
+              <button class="btn primary" id="startBtn">Let’s Play ←</button>
               <button class="btn ghost" id="resumeBtn" hidden>להמשיך מהמקום שעצרתי</button>
             </div>
           </div>
@@ -460,7 +427,6 @@
             <video id="openingVideo" autoplay muted loop playsinline preload="metadata" poster="poster.jpg">
               <source src="opening-film.mp4" type="video/mp4">
             </video>
-            <button class="sound-toggle" id="soundToggle" type="button">להפעיל קול</button>
           </div>
         </div>
       </section>
@@ -686,13 +652,6 @@
       state.playAnswer = document.getElementById("playAnswer").value.trim();
       localStorage.setItem(storageKey, JSON.stringify(state));
       document.getElementById("savedMessage").textContent = "המילה או התמונה נשמרה איתך ✓";
-    });
-
-    const openingVideo = document.getElementById("openingVideo");
-    document.getElementById("soundToggle").addEventListener("click", event => {
-      openingVideo.muted = !openingVideo.muted;
-      event.currentTarget.textContent = openingVideo.muted ? "להפעיל קול" : "להשתיק";
-      if (openingVideo.paused) openingVideo.play();
     });
 
     document.getElementById("copyBtn").addEventListener("click", async event => {
