@@ -119,6 +119,15 @@
       box-shadow: 0 4px 14px rgba(90,211,172,.35);
     }
 
+    /* ─── EXAMPLE VIDEOS (9:16) ──────────────────────────── */
+    .examples { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 8px; max-width: 560px; margin-inline: auto; }
+    .example-video {
+      border-radius: 16px; overflow: hidden; background: #000;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+    }
+    .example-video video { width: 100%; display: block; aspect-ratio: 9 / 16; object-fit: cover; }
+    @media (max-width: 600px) { .examples { grid-template-columns: 1fr; max-width: 300px; } }
+
     /* ─── FULL-WIDTH STRIPS (edge to edge) ───────────────── */
     .full-strip {
       width: 100vw;
@@ -251,6 +260,14 @@
           <div class="step-title">יוצרים עם בינה מלאכותית</div>
           <div class="step-body">כלי הבינה המלאכותית משמשים כשותפים בתהליך המחקר והיצירה. הם מסייעים להרחיב רעיונות, לפתח חלופות, לבחון תרחישי שימוש וליצור המחשות חזותיות למרחבי הלמידה.</div>
         </div>
+      </div>
+    </div>
+
+    <!-- דוגמאות לסרטים -->
+    <div class="section-block">
+      <div class="examples">
+        <div class="example-video"><video src="rethinker אתר/בית ספר של העתיד_1.mp4#t=0.1" controls playsinline preload="metadata"></video></div>
+        <div class="example-video"><video src="rethinker אתר/בית ספר של העתיד_2.mp4#t=0.1" controls playsinline preload="metadata"></video></div>
       </div>
     </div>
 
