@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<!--ARTIFACT-START-->
+<title>רגע התובנה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;500&family=Heebo:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    color-scheme: dark;
+    --ground: #06070c;
+    --ink: #e9edf6;
+    --ink-dim: #7d8599;
+    --spark: #f3b141;
+    --node: #c8dcff;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: 'Heebo', system-ui, sans-serif;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stage { position: relative; height: 100%; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: crosshair; }
+
+  .top {
+    position: absolute; inset-inline: 0; top: 0;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    padding: 18px 20px; pointer-events: none;
+  }
+  .mark { font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 500; font-size: 17px; letter-spacing: .02em; }
+  .mark span { color: var(--spark); }
+  .replay {
+    pointer-events: auto;
+    font: 400 13px 'Heebo', system-ui, sans-serif; color: var(--ink);
+    background: transparent; border: 1px solid rgba(233,237,246,.22);
+    border-radius: 999px; padding: 7px 16px; cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .replay:hover { border-color: var(--spark); color: var(--spark); }
+  .replay:focus-visible { outline: 2px solid var(--spark); outline-offset: 3px; }
+
+  .caption {
+    position: absolute; inset-inline: 0; bottom: 0;
+    padding: 0 20px 28px; text-align: center; pointer-events: none;
+    display: grid; justify-items: center; gap: 14px;
+  }
+  .phases { display: flex; gap: 18px; list-style: none; margin: 0; padding: 0; font-size: 12px; letter-spacing: .08em; color: var(--ink-dim); }
+  .phases li { display: flex; align-items: center; gap: 7px; transition: color .6s; }
+  .phases li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .5; transition: background .6s, opacity .6s, box-shadow .6s; }
+  .phases li.on { color: var(--ink); }
+  .phases li.on::before { background: var(--spark); opacity: 1; box-shadow: 0 0 10px var(--spark); }
+  .line {
+    font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 300;
+    font-size: clamp(18px, 2.4vw, 26px); line-height: 1.4; max-width: 34ch;
+    text-wrap: balance; min-height: 1.4em;
+    transition: opacity .9s ease;
+  }
+  .line.out { opacity: 0; }
+  .hint { font-size: 13px; color: var(--ink-dim); transition: opacity .6s; }
+  .hint.gone { opacity: 0; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <canvas id="c" aria-label="אנימציה: חלקיקים אקראיים שמתחברים ברגע של תובנה לרשת חיה ומאורגנת"></canvas>
+
+  <div class="top">
+    <div class="mark">רגע <span>התובנה</span></div>
+    <button class="replay" id="replay" type="button">מההתחלה</button>
+  </div>
+
+  <div class="caption">
+    <p class="line" id="line">אלפי רשמים. אף אחד לא מסתכל.</p>
+    <ol class="phases" id="phases">
+      <li class="on">רעש</li>
+      <li>ניצוץ</li>
+      <li>הדהוד</li>
+      <li>תודעה</li>
+    </ol>
+    <div class="hint" id="hint">לחצו במקום כלשהו כדי לעורר את התובנה</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+  const lineEl = document.getElementById('line');
+  const hintEl = document.getElementById('hint');
+  const phaseEls = [...document.querySelectorAll('#phases li')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const LINES = [
+    'אלפי רשמים. אף אחד לא מסתכל.',
+    'רגע אחד שבו משהו מתחבר.',
+    'החיבור מתפשט. כל נקודה מאירה את שכנתה.',
+    'המערכת מתחילה לראות את עצמה.'
+  ];
+
+  let W = 0, H = 0, DPR = 1;
+  let P = [], E = [], E2 = [], pulses = [], rings = [], curK = 0;
+  let start = 0, insight = null, origin = { x: 0, y: 0 }, flash = 0, phase = -1, lastBeat = 0;
+  const MAXP = 420, K = 3, GOLDEN = Math.PI * (3 - Math.sqrt(5));
+
+  function sprite(r, stops) {
+    const c = document.createElement('canvas'); c.width = c.height = r * 2;
+    const g = c.getContext('2d'), gr = g.createRadialGradient(r, r, 0, r, r, r);
+    stops.forEach(s => gr.addColorStop(s[0], s[1]));
+    g.fillStyle = gr; g.fillRect(0, 0, r * 2, r * 2); return c;
+  }
+  const GLOW = sprite(32, [[0, 'rgba(255,226,170,1)'], [.22, 'rgba(243,177,65,.5)'], [1, 'rgba(243,177,65,0)']]);
+  const BLUE = sprite(32, [[0, 'rgba(220,235,255,.9)'], [.3, 'rgba(140,180,255,.25)'], [1, 'rgba(140,180,255,0)']]);
+  const CORE = sprite(160, [[0, 'rgba(255,252,240,1)'], [.12, 'rgba(255,236,196,.85)'], [.4, 'rgba(243,177,65,.2)'], [1, 'rgba(243,177,65,0)']]);
+
+  const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+
+  function setPhase(n) {
+    if (n === phase) return;
+    phase = n;
+    phaseEls.forEach((el, i) => el.classList.toggle('on', i === n));
+    lineEl.classList.add('out');
+    setTimeout(() => { lineEl.textContent = LINES[n]; lineEl.classList.remove('out'); }, 450);
+  }
+
+  function resize() {
+    const r = cv.getBoundingClientRect();
+    const nw = r.width, nh = r.height;
+    if (W && nw && nh) {
+      const sx = nw / W, sy = nh / H;
+      const st = Math.min(nw, nh * 0.8) / Math.min(W, H * 0.8);
+      P.forEach(p => { p.x *= sx; p.y *= sy; p.tx *= st; p.ty *= st; });
+      origin.x *= sx; origin.y *= sy;
+    }
+    W = nw; H = nh; DPR = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.fillStyle = '#06070c'; ctx.fillRect(0, 0, W, H);
+  }
+
+  function init() {
+    const N = Math.round(Math.min(440, Math.max(170, W * H / 2600)));
+    P = [];
+    for (let i = 0; i < N; i++) {
+      P.push({ x: Math.random() * W, y: Math.random() * H, vx: 0, vy: 0,
+               lit: false, e: 0, ref: 0, nb: [], tx: 0, ty: 0, tw: Math.random() * 6.28 });
+    }
+    E = []; E2 = []; pulses = []; rings = []; curK = 0;
+    insight = null; flash = 0; phase = -1; lastBeat = 0;
+    start = performance.now();
+    setPhase(0);
+    hintEl.classList.remove('gone');
+  }
+
+  // k-nearest wiring. Built once from the chaos, and again from the finished pattern.
+  function knn(px, py, nbKey) {
+    const seen = new Set(), out = [];
+    P.forEach(p => p[nbKey] = []);
+    for (let i = 0; i < P.length; i++) {
+      const d = [];
+      for (let j = 0; j < P.length; j++) if (j !== i) {
+        const dx = px(i) - px(j), dy = py(i) - py(j);
+        d.push([dx * dx + dy * dy, j]);
+      }
+      d.sort((a, b) => a[0] - b[0]);
+      for (let k = 0; k < K; k++) {
+        const j = d[k][1], key = i < j ? i + ':' + j : j + ':' + i;
+        if (seen.has(key)) continue;
+        seen.add(key); out.push([i, j]);
+        P[i][nbKey].push(j); P[j][nbKey].push(i);
+      }
+    }
+    return out;
+  }
+  function buildEdges() { E = knn(i => P[i].x, i => P[i].y, 'nb'); }
+
+  // Phyllotaxis: the order a sunflower grows in. Nearest-to-spark gets the centre.
+  function assignTargets() {
+    const idx = P.map((p, i) => i).sort((a, b) =>
+      Math.hypot(P[a].x - origin.x, P[a].y - origin.y) - Math.hypot(P[b].x - origin.x, P[b].y - origin.y));
+    const c = Math.min(W, H * 0.8) * 0.36 / Math.sqrt(P.length);
+    idx.forEach((pi, n) => {
+      const r = c * Math.sqrt(n + 0.5), a = n * GOLDEN;
+      P[pi].tx = r * Math.cos(a); P[pi].ty = r * Math.sin(a);
+    });
+    E2 = knn(i => P[i].tx, i => P[i].ty, 'nb2');
+  }
+
+  function trigger(x, y, now) {
+    if (insight !== null) return;
+    insight = now; origin = { x, y }; flash = reduce ? 0 : 1;
+    buildEdges(); assignTargets();
+    hintEl.classList.add('gone');
+    rings.push({ t: now, x, y, big: true });
+  }
+
+  function fire(i, from, prob, now) {
+    const p = P[i];
+    if (now < p.ref) return;
+    p.ref = now + 550 + Math.random() * 700;
+    for (const j of (curK > 0.5 ? p.nb2 : p.nb)) {
+      if (j === from || pulses.length >= MAXP) continue;
+      if (Math.random() < prob) pulses.push({ a: i, b: j, s: 0 });
+    }
+  }
+
+  function tick(now) {
+    const dt = Math.min(0.05, (now - (tick.last || now)) / 1000); tick.last = now;
+    const f = dt * 60;
+    const tt = (now - start) / 1000;
+
+    if (insight === null && tt > 7) trigger(W * (0.42 + Math.random() * 0.16), H * (0.4 + Math.random() * 0.12), now);
+
+    let ti = 0, k = 0, waveR = 0, cx = W / 2, cy = H / 2;
+    if (insight !== null) {
+      ti = (now - insight) / 1000;
+      k = smooth((ti - 4.5) / 6); curK = k;
+      waveR = ti * Math.hypot(W, H) / 3.2;
+      cx = origin.x + (W / 2 - origin.x) * k;
+      cy = origin.y + (H * 0.4 - origin.y) * k;
+      setPhase(ti < 1.4 ? 1 : ti < 6 ? 2 : 3);
+    }
+
+    // Pre-insight tension: the noise slows and leans toward where the spark will be.
+    const calm = insight === null ? smooth((tt - 4) / 3) : 0;
+    const rot = ti * 0.035, cr = Math.cos(rot), sr = Math.sin(rot);
+    const prob = insight === null ? 0 : ti < 6 ? 0.72 : 0.46;
+
+    for (let i = 0; i < P.length; i++) {
+      const p = P[i];
+      const jitter = 0.07 * (1 - k) * (1 - calm * 0.7);
+      p.vx += (Math.random() - 0.5) * jitter * f;
+      p.vy += (Math.random() - 0.5) * jitter * f;
+      p.vx *= Math.pow(0.965, f); p.vy *= Math.pow(0.965, f);
+      p.x += p.vx * f; p.y += p.vy * f;
+      if (insight === null) {
+        if (p.x < 0) p.x += W; else if (p.x > W) p.x -= W;
+        if (p.y < 0) p.y += H; else if (p.y > H) p.y -= H;
+      }
+      if (k > 0) {
+        const gx = cx + p.tx * cr - p.ty * sr, gy = cy + p.tx * sr + p.ty * cr;
+        const a = Math.min(1, dt * 1.6 * k);
+        p.x += (gx - p.x) * a; p.y += (gy - p.y) * a;
+      }
+      if (insight !== null && !p.lit && Math.hypot(p.x - origin.x, p.y - origin.y) < waveR) {
+        p.lit = true; p.e = 1; fire(i, -1, 0.9, now);
+      }
+      p.e *= Math.exp(-dt * 2.4);
+    }
+
+    for (let n = pulses.length - 1; n >= 0; n--) {
+      const q = pulses[n], a = P[q.a], b = P[q.b];
+      const len = Math.hypot(b.x - a.x, b.y - a.y) || 1;
+      q.s += dt * 210 / len;
+      if (q.s >= 1) {
+        pulses.splice(n, 1);
+        b.e = 1; fire(q.b, q.a, prob, now);
+      }
+    }
+
+    // Self-reference: once coherent, the centre beats and the network hears itself.
+    if (k > 0.6 && now - lastBeat > 3600) {
+      lastBeat = now;
+      rings.push({ t: now, x: cx, y: cy, big: false });
+      let best = [];
+      P.forEach((p, i) => best.push([Math.hypot(p.x - cx, p.y - cy), i]));
+      best.sort((a, b) => a[0] - b[0]).slice(0, 4).forEach(([, i]) => { P[i].ref = 0; P[i].e = 1; fire(i, -1, 1, now); });
+    }
+
+    draw(now, ti, k, waveR, cx, cy);
+    requestAnimationFrame(tick);
+  }
+
+  function draw(now, ti, k, waveR, cx, cy) {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(6,7,12,0.34)';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.globalCompositeOperation = 'lighter';
+
+    if (insight !== null) {
+      // The chaotic wiring fades as the pattern's own wiring takes over.
+      ctx.lineWidth = 0.6;
+      [[E, 0.1 * (1 - k)], [E2, 0.16 * k]].forEach(([set, al]) => {
+        if (al < 0.005) return;
+        ctx.strokeStyle = `rgba(140,175,240,${al})`;
+        ctx.beginPath();
+        for (const [i, j] of set) {
+          const a = P[i], b = P[j];
+          if (!a.lit || !b.lit) continue;
+          ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        }
+        ctx.stroke();
+      });
+      ctx.lineWidth = 1;
+      for (const [i, j] of (k > 0.5 ? E2 : E)) {
+        const a = P[i], b = P[j], e = Math.max(a.e, b.e);
+        if (!a.lit || !b.lit || e < 0.12) continue;
+        ctx.strokeStyle = `rgba(243,190,110,${e * 0.32})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+    }
+
+    for (const q of pulses) {
+      const a = P[q.a], b = P[q.b];
+      const x = a.x + (b.x - a.x) * q.s, y = a.y + (b.y - a.y) * q.s;
+      ctx.drawImage(GLOW, x - 7, y - 7, 14, 14);
+    }
+
+    for (const p of P) {
+      const tw = 0.55 + 0.45 * Math.sin(now / 900 + p.tw);
+      if (!p.lit) {
+        ctx.fillStyle = `rgba(120,132,160,${0.28 + 0.3 * tw})`;
+        ctx.fillRect(p.x - 0.8, p.y - 0.8, 1.6, 1.6);
+      } else {
+        ctx.globalAlpha = 0.35 + 0.25 * tw;
+        ctx.drawImage(BLUE, p.x - 5, p.y - 5, 10, 10);
+        ctx.globalAlpha = 1;
+        if (p.e > 0.04) {
+          const s = 6 + p.e * 24;
+          ctx.globalAlpha = p.e;
+          ctx.drawImage(GLOW, p.x - s / 2, p.y - s / 2, s, s);
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    if (insight !== null) {
+      const breathe = 1 + 0.08 * Math.sin(now / 700);
+      const s = (70 + 520 * Math.exp(-ti * 1.8)) * breathe * (0.75 + 0.25 * k);
+      ctx.globalAlpha = Math.min(1, 0.55 + 0.45 * Math.exp(-ti));
+      ctx.drawImage(CORE, cx - s / 2, cy - s / 2, s, s);
+      ctx.globalAlpha = 1;
+
+      if (ti < 3.6) {
+        ctx.strokeStyle = `rgba(243,177,65,${0.55 * (1 - ti / 3.6)})`;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(origin.x, origin.y, waveR, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    for (let n = rings.length - 1; n >= 0; n--) {
+      const r = rings[n], t = (now - r.t) / 1000, life = r.big ? 1.2 : 2.4;
+      if (t > life) { rings.splice(n, 1); continue; }
+      const rad = r.big ? 20 + t * 420 : 30 + t * Math.min(W, H) * 0.22;
+      ctx.strokeStyle = `rgba(255,236,196,${(r.big ? 0.8 : 0.22) * (1 - t / life)})`;
+      ctx.lineWidth = r.big ? 3 : 1;
+      ctx.beginPath(); ctx.arc(r.x, r.y, rad, 0, Math.PI * 2); ctx.stroke();
+    }
+
+    if (flash > 0.004) {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = `rgba(255,248,232,${flash * 0.85})`;
+      ctx.fillRect(0, 0, W, H);
+      flash *= 0.9;
+    }
+  }
+
+  cv.addEventListener('pointerdown', e => {
+    const r = cv.getBoundingClientRect();
+    trigger(e.clientX - r.left, e.clientY - r.top, performance.now());
+  });
+  document.getElementById('replay').addEventListener('click', () => { init(); if (reduce) settle(); });
+  window.addEventListener('resize', resize);
+
+  // Reduced motion: skip the flash and the long build-up, open on the coherent state.
+  function settle() {
+    const now = performance.now();
+    trigger(W / 2, H * 0.4, now);
+    insight = now - 20000;
+    curK = 1;
+    P.forEach(p => { p.lit = true; p.x = W / 2 + p.tx; p.y = H * 0.4 + p.ty; });
+  }
+
+  resize(); init();
+  if (reduce) settle();
+  requestAnimationFrame(tick);
+})();
+</script>
+<!--ARTIFACT-END-->
+</body>
+</html>
