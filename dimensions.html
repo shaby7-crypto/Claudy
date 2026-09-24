@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ממימד 3 למימד 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;500&family=Heebo:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  :root { color-scheme: dark; --ground: #06070c; --ink: #eef0f7; --dim: #8a90a3; --gold: #f3b141; }
+  html, body { height: 100%; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: 'Heebo', system-ui, sans-serif; overflow: hidden; }
+  .stage { position: relative; height: 100%; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .dim {
+    position: absolute; top: 5%; inset-inline: 0; text-align: center; pointer-events: none;
+    display: grid; justify-items: center; gap: 2px;
+  }
+  .dim small { font-size: 16px; color: var(--dim); }
+  .dim b {
+    font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 300;
+    font-size: clamp(64px, 16vw, 120px); line-height: 1; transition: opacity .7s, color 2s, text-shadow 2s;
+  }
+  .dim b.out { opacity: 0; }
+  .dim.lit b { color: #fff3da; text-shadow: 0 0 28px rgba(243,177,65,.55); }
+
+  .cap {
+    position: absolute; inset-inline: 0; top: 74%; padding: 0 28px; text-align: center; pointer-events: none;
+    display: grid; justify-items: center;
+  }
+  .cap p {
+    margin: 0; font-family: 'Frank Ruhl Libre', Georgia, serif; font-weight: 300;
+    font-size: clamp(22px, 5.6vw, 34px); line-height: 1.35; max-width: 18ch; text-wrap: balance;
+    transition: opacity .8s ease;
+  }
+  .cap p.out { opacity: 0; }
+  .cap em { font-style: normal; color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <canvas id="c" aria-label="אנימציה: מעבר ממימד 3 של חומר ונפרדות, דרך מימד 4, אל מימד 5 של אחדות"></canvas>
+  <div class="dim" id="dim"><small>מימד</small><b id="num">3</b></div>
+  <div class="cap"><p id="line"></p></div>
+</div>
+
+<script>
+(() => {
+  const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+  const numEl = document.getElementById('num'), dimEl = document.getElementById('dim'), lineEl = document.getElementById('line');
+
+  // [start second, dimension, caption]
+  const BEATS = [
+    [0.4,  3, 'חומר. כובד. כל אחד <em>בתוך הקופסה שלו.</em>'],
+    [8,    4, 'הקירות מתרככים. הזמן <em>מפסיק להיות קו.</em>'],
+    [15,   5, 'אין ״אני״ ו״אתה״. יש <em>שדה אחד.</em>'],
+    [20.5, 5, 'הכול היה כאן <em>תמיד.</em>']
+  ];
+  const LOOP = 26;
+
+  let W, H, DPR, start, beat = -1, P = [];
+  const N = 520, CELL = 104, GAP = 128, D = 900, F = 720;
+
+  const smooth = t => t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+  const mix = (a, b, t) => a + (b - a) * t;
+
+  function sprite(r, stops) {
+    const c = document.createElement('canvas'); c.width = c.height = r * 2;
+    const g = c.getContext('2d'), gr = g.createRadialGradient(r, r, 0, r, r, r);
+    stops.forEach(s => gr.addColorStop(s[0], s[1])); g.fillStyle = gr; g.fillRect(0, 0, r * 2, r * 2); return c;
+  }
+  const GOLD = sprite(32, [[0, 'rgba(255,240,210,1)'], [.25, 'rgba(243,177,65,.45)'], [1, 'rgba(243,177,65,0)']]);
+  const VIOLET = sprite(32, [[0, 'rgba(235,225,255,1)'], [.25, 'rgba(160,120,255,.45)'], [1, 'rgba(160,120,255,0)']]);
+  const SUN = sprite(200, [[0, 'rgba(255,252,240,1)'], [.1, 'rgba(255,236,196,.8)'], [.35, 'rgba(243,177,65,.18)'], [.7, 'rgba(150,110,255,.06)'], [1, 'rgba(150,110,255,0)']]);
+
+  // The 3x3x3 lattice of rooms that the 3rd dimension lives in.
+  const cells = [];
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++)
+    cells.push({ x: i * GAP, y: j * GAP, z: k * GAP, ph: Math.random() * 6.28 });
+  const CUBE_V = [];
+  for (const a of [-1, 1]) for (const b of [-1, 1]) for (const c of [-1, 1]) CUBE_V.push([a, b, c]);
+  const CUBE_E = [];
+  for (let a = 0; a < 8; a++) for (let b = a + 1; b < 8; b++) {
+    const d = CUBE_V[a].reduce((s, v, i) => s + (v !== CUBE_V[b][i] ? 1 : 0), 0);
+    if (d === 1) CUBE_E.push([a, b]);
+  }
+
+  // Flower of Life: 19 overlapping circles, the unity pattern of the 5th.
+  function flower(r) {
+    const c = [[0, 0]];
+    for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3; c.push([r * Math.cos(a), r * Math.sin(a)]); }
+    for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3; c.push([2 * r * Math.cos(a), 2 * r * Math.sin(a)]); }
+    for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; c.push([Math.sqrt(3) * r * Math.cos(a), Math.sqrt(3) * r * Math.sin(a)]); }
+    return c;
+  }
+
+  function resize() {
+    const r = cv.getBoundingClientRect(); W = r.width; H = r.height;
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+
+  function reset() {
+    P = [];
+    for (let i = 0; i < N; i++) {
+      const c = cells[i % cells.length], h = CELL / 2 - 4;
+      P.push({
+        cell: c, lx: (Math.random() * 2 - 1) * h, ly: (Math.random() * 2 - 1) * h, lz: (Math.random() * 2 - 1) * h,
+        vx: (Math.random() - .5) * 2, vy: 0, vz: (Math.random() - .5) * 2,
+        free: false, rel: 0.1 + Math.random() * 0.5,
+        ring: i % 19, ang: Math.random() * 6.28, dir: (i % 2 ? 1 : -1), sx: 0, sy: 0
+      });
+    }
+    start = performance.now(); beat = -1;
+    ctx.fillStyle = '#06070c'; ctx.fillRect(0, 0, W, H);
+  }
+
+  function setBeat(n) {
+    if (n === beat) return;
+    const prevDim = beat >= 0 ? BEATS[beat][1] : null;
+    beat = n;
+    const [, dim, text] = BEATS[n];
+    lineEl.classList.add('out');
+    setTimeout(() => { lineEl.innerHTML = text; lineEl.classList.remove('out'); }, 800);
+    if (dim !== prevDim) {
+      numEl.classList.add('out');
+      setTimeout(() => { numEl.textContent = dim; numEl.classList.remove('out'); dimEl.classList.toggle('lit', dim === 5); }, 700);
+    }
+  }
+
+  function tick(now) {
+    let t = (now - start) / 1000;
+    if (t > LOOP) { reset(); t = 0; }
+    const dt = Math.min(0.05, (now - (tick.last || now)) / 1000); tick.last = now;
+    const f = dt * 60;
+
+    for (let n = BEATS.length - 1; n >= 0; n--) if (t >= BEATS[n][0]) { setBeat(n); break; }
+
+    const u = smooth((t - 8) / 7);   // 3 -> 4: dissolving
+    const w = smooth((t - 15) / 5);  // 4 -> 5: unifying
+    const cx = W / 2, cy = H * 0.47;
+    const scale = Math.min(W / 540, H / 960);
+
+    // Ground: from dense night to a violet field with a sun at its heart.
+    const trail = t < 8 ? 1 : mix(1, 0.1, smooth((t - 8) / 3)) + 0.3 * w;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = `rgba(${mix(6, 12, w) | 0},${mix(7, 7, w) | 0},${mix(12, 26, w) | 0},${Math.min(1, trail)})`;
+    ctx.fillRect(0, 0, W, H);
+
+    const yaw = t * 0.16 + u * t * 0.12, pitch = 0.38 - 0.2 * u;
+    const cyaw = Math.cos(yaw), syaw = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+    const proj = (x, y, z) => {
+      const x1 = x * cyaw - z * syaw, z1 = x * syaw + z * cyaw;
+      const y1 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+      const k = F / (z2 + D) * scale;
+      return [cx + x1 * k, cy + y1 * k, k, z2];
+    };
+
+    // Lattice of rooms. In the 4th it breathes inside-out like a tesseract, then dissolves.
+    const latA = 0.42 * (1 - u) + 0.28 * Math.sin(Math.PI * u) * (1 - w);
+    if (latA > 0.01) {
+      ctx.lineWidth = 1;
+      for (const c of cells) {
+        const spread = 1 + 0.5 * u, breathe = 1 + 0.35 * u * Math.sin(t * 2.2 + c.ph);
+        const ox = c.x * spread, oy = c.y * spread, oz = c.z * spread;
+        const outer = CUBE_V.map(v => proj(ox + v[0] * CELL / 2 * breathe, oy + v[1] * CELL / 2 * breathe, oz + v[2] * CELL / 2 * breathe));
+        ctx.strokeStyle = `rgba(${mix(150, 190, u) | 0},${mix(158, 150, u) | 0},${mix(178, 255, u) | 0},${latA})`;
+        ctx.beginPath();
+        for (const [a, b] of CUBE_E) { ctx.moveTo(outer[a][0], outer[a][1]); ctx.lineTo(outer[b][0], outer[b][1]); }
+        ctx.stroke();
+        const tes = Math.sin(Math.PI * u);
+        if (tes > 0.05) {
+          const inner = CUBE_V.map(v => proj(ox + v[0] * CELL / 4 / breathe, oy + v[1] * CELL / 4 / breathe, oz + v[2] * CELL / 4 / breathe));
+          ctx.strokeStyle = `rgba(190,160,255,${0.3 * tes * (1 - w)})`;
+          ctx.beginPath();
+          for (const [a, b] of CUBE_E) { ctx.moveTo(inner[a][0], inner[a][1]); ctx.lineTo(inner[b][0], inner[b][1]); }
+          for (let v = 0; v < 8; v++) { ctx.moveTo(inner[v][0], inner[v][1]); ctx.lineTo(outer[v][0], outer[v][1]); }
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Rising frequency: rings that start in the 4th.
+    if (u > 0 && w < 1) {
+      ctx.lineWidth = 1.2;
+      for (let n = 0; n < 4; n++) {
+        const ph = ((t * 0.45 + n / 4) % 1);
+        ctx.strokeStyle = `rgba(200,170,255,${0.22 * u * (1 - w) * (1 - ph)})`;
+        ctx.beginPath(); ctx.arc(cx, cy, ph * Math.max(W, H) * 0.7, 0, 6.283); ctx.stroke();
+      }
+    }
+
+    // Flower of Life appears in the 5th.
+    const R = 62 * scale * (1 + 0.035 * Math.sin(t * 1.6));
+    const fl = flower(R);
+    if (w > 0) {
+      ctx.globalCompositeOperation = 'lighter';
+      const s = (185 + 35 * Math.sin(t * 1.6)) * scale * w;
+      ctx.globalAlpha = w; ctx.drawImage(SUN, cx - s, cy - s, s * 2, s * 2); ctx.globalAlpha = 1;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(255,222,160,${0.28 * w})`;
+      ctx.beginPath();
+      for (const [x, y] of fl) { ctx.moveTo(cx + x + R, cy + y); ctx.arc(cx + x, cy + y, R, 0, 6.283); }
+      ctx.moveTo(cx + 3 * R, cy); ctx.arc(cx, cy, 3 * R, 0, 6.283);
+      ctx.stroke();
+      // slow rays
+      ctx.strokeStyle = `rgba(255,230,190,${0.06 * w})`;
+      ctx.beginPath();
+      for (let k = 0; k < 24; k++) {
+        const a = k * Math.PI / 12 + t * 0.05;
+        ctx.moveTo(cx + Math.cos(a) * 3.2 * R, cy + Math.sin(a) * 3.2 * R);
+        ctx.lineTo(cx + Math.cos(a) * Math.max(W, H), cy + Math.sin(a) * Math.max(W, H));
+      }
+      ctx.stroke();
+    }
+
+    // Particles: heavy and boxed in the 3rd, released and trailing in the 4th, one field in the 5th.
+    ctx.globalCompositeOperation = u > 0 ? 'lighter' : 'source-over';
+    const grav = mix(0.22, -0.03, u);
+    for (const p of P) {
+      if (!p.free && u > p.rel) p.free = true;
+      p.vy += grav * f;
+      if (!p.free) {
+        const h = CELL / 2 - 3;
+        p.vx += (Math.random() - .5) * 0.3 * f; p.vz += (Math.random() - .5) * 0.3 * f;
+        p.lx += p.vx * f; p.ly += p.vy * f; p.lz += p.vz * f;
+        if (p.ly > h) { p.ly = h; p.vy *= -0.55; if (Math.abs(p.vy) < 1.2) p.vy = -1.2 - Math.random() * 3; }
+        if (p.ly < -h) { p.ly = -h; p.vy = Math.abs(p.vy); }
+        if (Math.abs(p.lx) > h) { p.lx = Math.sign(p.lx) * h; p.vx *= -1; }
+        if (Math.abs(p.lz) > h) { p.lz = Math.sign(p.lz) * h; p.vz *= -1; }
+        p.vx *= 0.98; p.vz *= 0.98;
+      } else {
+        // swirl around the vertical axis and drift outward: no more walls
+        const wx = p.cell.x * (1 + 0.5 * u) + p.lx, wz = p.cell.z * (1 + 0.5 * u) + p.lz;
+        p.vx += (-wz * 0.0009 + wx * 0.0003) * f; p.vz += (wx * 0.0009 + wz * 0.0003) * f;
+        p.vx *= 0.97; p.vy *= 0.97; p.vz *= 0.97;
+        p.lx += p.vx * f; p.ly += p.vy * f; p.lz += p.vz * f;
+      }
+      const spread = 1 + 0.5 * u;
+      const [x, y, k] = proj(p.cell.x * spread + p.lx, p.cell.y * spread + p.ly, p.cell.z * spread + p.lz);
+
+      p.ang += p.dir * dt * 0.35;
+      const [fx, fy] = fl[p.ring];
+      const tx = cx + fx + R * Math.cos(p.ang), ty = cy + fy + R * Math.sin(p.ang);
+      const sx = mix(x, tx, w), sy = mix(y, ty, w);
+
+      if (u <= 0) {
+        const s = 1.8 + k * 2.2;
+        ctx.fillStyle = `rgba(165,171,188,${0.6 + 0.3 * k})`;
+        ctx.fillRect(sx - s / 2, sy - s / 2, s, s);
+      } else {
+        const s = (5 + k * 7) * (1 + 0.4 * w);
+        ctx.globalAlpha = 0.55 + 0.45 * u;
+        ctx.drawImage(w > 0.5 ? GOLD : VIOLET, sx - s / 2, sy - s / 2, s, s);
+        if (w > 0 && w < 0.5) { ctx.globalAlpha = w * 2 * 0.8; ctx.drawImage(GOLD, sx - s / 2, sy - s / 2, s, s); }
+        ctx.globalAlpha = 1;
+      }
+      p.sx = sx; p.sy = sy;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); reset();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
