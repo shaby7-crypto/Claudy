@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Revital Chitayat - 60s reel (ribbon)</title>
+<style>
+  @font-face { font-family: "Assistant"; font-weight: 400; src: url(assets/assistant-hebrew-400-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 700; src: url(assets/assistant-hebrew-700-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 800; src: url(assets/assistant-hebrew-800-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 400; src: url(assets/assistant-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  @font-face { font-family: "Assistant"; font-weight: 700; src: url(assets/assistant-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  @font-face { font-family: "Assistant"; font-weight: 800; src: url(assets/assistant-latin-800-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F8F8F8; }
+  body { font-family: "Assistant", sans-serif; color: #41262D; }
+  .scene { position: absolute; inset: 0; overflow: hidden; display: none; }
+  .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .scene path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .it { position: absolute; right: 90px; left: 90px; opacity: 0; will-change: transform, opacity, filter; transform-origin: right center; }
+  .xl { font-size: 190px; font-weight: 800; line-height: 1; }
+  .l  { font-size: 130px; font-weight: 800; line-height: 1.05; }
+  .m  { font-size: 84px;  font-weight: 700; line-height: 1.15; }
+  .s  { font-size: 56px;  font-weight: 400; line-height: 1.3; }
+  .chip { right: auto; left: auto; display: inline-block; padding: 22px 44px; border-radius: 999px; font-size: 58px; font-weight: 700; }
+  .center { text-align: center; transform-origin: center; }
+  .logo { position: absolute; left: 90px; width: 900px; opacity: 0; }
+  .btn { right: 50%; left: auto; transform-origin: center; background: #CCF359; color: #41262D; font-size: 64px; font-weight: 800; padding: 30px 80px; border-radius: 999px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+  const C = { lav: "#CDAEE4", lime: "#CCF359", sand: "#CEC3BC", choc: "#41262D", snow: "#F8F8F8" };
+
+  // Ribbons are point lists smoothed into curves. A ribbon can morph to a second point list
+  // (same length), change width, and is split into colour segments like the brand shape library.
+  // head/tail: drawn window along the path, as [startTime, duration] ramps.
+  const P = (s) => s.trim().split(/\s+/).map((xy) => xy.split(",").map(Number));
+
+  const LOOSE_KNOT = P("-80,1300 200,1180 380,1420 240,1560 160,1380 420,1150 660,1260 560,1500 420,1380 700,1120 920,1240 860,1480 700,1400 900,1160 1160,1260");
+  const TIGHT_KNOT = P("-80,1300 300,1300 460,1380 400,1460 360,1340 480,1250 580,1300 540,1420 480,1340 600,1240 700,1300 660,1420 600,1340 760,1280 1160,1300");
+  const FREE_WAVE = P("-80,1560 60,1480 200,1420 340,1460 460,1560 560,1640 680,1660 800,1600 900,1520 980,1460 1040,1450 1080,1470 1110,1500 1140,1530 1160,1560");
+
+  const SCENES = [
+    // 1. The sea parts: two ribbons split open to reveal the question.
+    { from: 0, bg: C.snow,
+      ribbons: [
+        { pts: P("-100,900 140,820 360,980 600,880 840,800 1180,940"), to: P("-100,420 140,300 360,500 600,380 840,280 1180,420"),
+          morph: [1.4, 1.2], colors: [C.lav, C.lime], w: 90, head: [0, 1.2] },
+        { pts: P("1180,1020 940,1100 700,960 460,1060 220,1140 -100,1000"), to: P("1180,1500 940,1620 700,1440 460,1560 220,1660 -100,1520"),
+          morph: [1.4, 1.2], colors: [C.sand, C.choc], w: 90, head: [0.2, 1.2] },
+      ],
+      items: [
+        { t: "מכירים את", cls: "m", top: 720, at: 2.0 },
+        { t: "תסמונת<br>משה רבנו?", cls: "xl", top: 840, at: 2.5, anim: "pop" },
+      ] },
+    // 2. A calling: a dot, then a ribbon that starts tight and breaks free.
+    { from: 5, bg: C.lav,
+      dots: [{ x: 900, y: 1660, r: 46, c: C.lime, at: 5.3, pulse: true }],
+      ribbons: [
+        { pts: P("900,1660 760,1600 880,1540 740,1480 860,1420 720,1360 600,1440 420,1500 220,1380 140,1120 260,900 160,640 -100,520"),
+          colors: [C.choc, C.lime], w: 60, head: [6.0, 4.0], back: true },
+      ],
+      items: [
+        { t: "קריאה פנימית", cls: "l", top: 380, at: 5.4 },
+        { t: "להוביל.", cls: "m", top: 600, at: 6.6 },
+        { t: "לקדם שינוי.", cls: "m", top: 710, at: 7.4 },
+        { t: "לקחת אנשים", cls: "m", top: 880, at: 8.6 },
+        { t: "מעבדות לחירות.", cls: "l", top: 980, at: 9.2 },
+      ] },
+    // 3. The ribbon becomes a question mark.
+    { from: 12, bg: C.choc, fg: C.snow,
+      ribbons: [
+        { pts: P("330,1080 360,930 480,860 640,880 740,1000 700,1140 590,1220 540,1320 540,1420"),
+          colors: [C.lav, C.lime], w: 100, head: [12.4, 1.6] },
+      ],
+      dots: [{ x: 540, y: 1590, r: 62, c: C.lime, at: 14.0 }],
+      items: [
+        { t: "מי אני?", cls: "xl", top: 360, at: 12.4, anim: "pop" },
+        { t: "למה אני?", cls: "xl", top: 580, at: 13.6, anim: "pop", color: C.lav },
+      ] },
+    // 4. Thoughts pile up and the ribbon tangles.
+    { from: 17, bg: C.snow,
+      ribbons: [
+        { pts: LOOSE_KNOT, colors: [C.sand, C.choc, C.lav], w: 46, head: [17.4, 6.8], back: true },
+      ],
+      items: [
+        { t: "אולי אני צריכה עוד קורס", cls: "chip", top: 420, rightPx: 90, at: 17.4, bg: C.sand, rot: -2 },
+        { t: "מה יחשבו עליי", cls: "chip", top: 590, rightPx: 260, at: 18.8, bg: C.lav, rot: 2.5 },
+        { t: "לא נעים לי להיחשף", cls: "chip", top: 760, rightPx: 120, at: 20.0, bg: C.sand, rot: -1.5 },
+        { t: "אחרים עושים את זה טוב יותר", cls: "chip", top: 930, rightPx: 70, at: 21.2, bg: C.lime, rot: 1.5 },
+      ] },
+    // 5. The knot pulls tight: barriers to greatness.
+    { from: 25, bg: C.lime,
+      ribbons: [
+        { pts: LOOSE_KNOT, to: TIGHT_KNOT, morph: [25.6, 2.4], colors: [C.sand, C.choc, C.lav], w: 46, w2: 80, head: [-1, 0] },
+      ],
+      items: [
+        { t: "אלה", cls: "m", top: 440, at: 25.4 },
+        { t: "מחסומי<br>הגדולה.", cls: "xl", top: 570, at: 25.9, anim: "pop" },
+      ] },
+    // 6. Dimming: the ribbon thins and greys out.
+    { from: 30, bg: C.sand,
+      ribbons: [
+        { pts: P("-100,1500 160,1420 380,1560 620,1460 860,1380 1180,1500"), colors: [C.lav, C.lime], w: 80, w2: 10, wAt: [33, 2.6],
+          fadeTo: 0.25, head: [30.2, 1.2] },
+      ],
+      items: [
+        { t: "סיפור ילדות", cls: "m", top: 480, at: 30.3 },
+        { t: "שלימד אותנו", cls: "m", top: 590, at: 31.0 },
+        { t: "לעמעם את האור.", cls: "m", top: 760, at: 32.0, anim: "dim", dimAt: 34.6 },
+        { t: "לצמצם נוכחות.", cls: "m", top: 880, at: 33.0, anim: "dim", dimAt: 34.9 },
+        { t: "כדי להישאר שייכים.", cls: "m", top: 1060, at: 34.6 },
+      ] },
+    // 7. The opposite: the knot opens and the ribbon swells.
+    { from: 37, bg: C.choc, fg: C.snow,
+      ribbons: [
+        { pts: TIGHT_KNOT, to: FREE_WAVE, morph: [39.4, 1.6], colors: [C.lav, C.lime, C.sand], w: 40, w2: 170, wAt: [39.6, 4.0], head: [37.2, 1.0] },
+      ],
+      items: [
+        { t: "בתהליך המנטורינג", cls: "s", top: 330, at: 37.4, color: C.lav },
+        { t: "עושים בדיוק<br>את ההפך:", cls: "m", top: 420, at: 38.2 },
+        { t: "להגביר", cls: "xl", top: 640, at: 39.8, anim: "pop", color: C.lime },
+        { t: "את הקול.", cls: "l", top: 860, at: 41.4 },
+        { t: "את הנוכחות.", cls: "l", top: 1000, at: 42.4 },
+        { t: "את המסר.", cls: "l", top: 1140, at: 43.4 },
+      ] },
+    // 8. A leader dot draws the path, followers trail behind.
+    { from: 46, bg: C.lav,
+      ribbons: [
+        { pts: P("1180,960 960,860 760,1020 560,900 360,780 160,920 -100,860"), colors: [C.choc, C.lime], w: 50, head: [46.3, 4.4],
+          leader: { r: 64, c: C.choc }, followers: [{ gap: 150, r: 30, c: C.lime, at: 48.0 }, { gap: 260, r: 30, c: C.snow, at: 48.6 }, { gap: 370, r: 30, c: C.lime, at: 49.2 }] },
+      ],
+      items: [
+        { t: "כדי שהאנשים<br>שמחכים לכם", cls: "m", top: 420, at: 46.3 },
+        { t: "יזהו אתכם", cls: "l", top: 1220, at: 48.0 },
+        { t: "וילכו אחריכם.", cls: "l", top: 1360, at: 49.2 },
+      ] },
+    // 9. Close: logo, ribbons frame, call to action.
+    { from: 52, bg: C.snow,
+      ribbons: [
+        { pts: P("-100,260 180,120 420,360 680,220 940,120 1180,280"), colors: [C.lav, C.lime], w: 80, head: [52.2, 1.4] },
+        { pts: P("1180,1640 920,1520 700,1720 460,1600 200,1500 -100,1660"), colors: [C.sand, C.choc], w: 80, head: [52.4, 1.4] },
+      ],
+      items: [
+        { t: "אם הקריאה הזו<br>מוכרת לכם,", cls: "m center", top: 470, at: 52.3 },
+        { logo: true, top: 760, at: 53.4 },
+        { t: "בואו נדבר", cls: "btn", top: 1170, at: 54.8, anim: "pop" },
+        { t: "הקישור בפרופיל", cls: "s center", top: 1340, at: 55.6 },
+      ] },
+  ];
+  const DURATION = 60;
+  const WIPE = 0.55;
+  const WIPES = [
+    "M 1300 2200 C 900 1400, 200 1300, -300 -300",
+    "M -300 2200 C 200 1400, 900 1300, 1400 -300",
+  ];
+
+  const NS = "http://www.w3.org/2000/svg";
+  const svgEl = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  const smooth = (pts) => {
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += ` C ${p1[0] + (p2[0] - p0[0]) / 6} ${p1[1] + (p2[1] - p0[1]) / 6}, ${p2[0] - (p3[0] - p1[0]) / 6} ${p2[1] - (p3[1] - p1[1]) / 6}, ${p2[0]} ${p2[1]}`;
+    }
+    return d;
+  };
+
+  const stage = document.getElementById("stage");
+  SCENES.forEach((s, i) => {
+    s.to = i + 1 < SCENES.length ? SCENES[i + 1].from + WIPE : DURATION;
+    const el = document.createElement("section");
+    el.className = "scene";
+    el.style.color = s.fg || C.choc;
+    el.style.zIndex = i;
+    const back = svgEl("svg", { viewBox: "0 0 1080 1920" });
+    const front = svgEl("svg", { viewBox: "0 0 1080 1920" });
+    if (i === 0) el.style.background = s.bg;
+    else { s.wipe = svgEl("path", { d: WIPES[i % 2], stroke: s.bg, "stroke-width": 2600 }); back.appendChild(s.wipe); }
+    el.appendChild(back);
+    for (const r of s.ribbons || []) {
+      const g = svgEl("g", {});
+      r.segs = r.colors.map((c) => { const p = svgEl("path", { stroke: c, "stroke-width": r.w }); g.appendChild(p); return p; });
+      r.g = g;
+      r.marks = [];
+      if (r.leader) r.marks.push(Object.assign({ gap: 0, at: -1 }, r.leader));
+      for (const f of r.followers || []) r.marks.push(f);
+      for (const m of r.marks) { m.el = svgEl("circle", { r: m.r, fill: m.c }); g.appendChild(m.el); }
+    }
+    const items = document.createElement("div");
+    for (const it of s.items) {
+      let n;
+      if (it.logo) { n = document.createElement("img"); n.src = "assets/logo.png"; n.className = "logo"; }
+      else {
+        n = document.createElement("div");
+        n.className = "it " + it.cls;
+        n.innerHTML = it.t;
+        if (it.color) n.style.color = it.color;
+        if (it.bg) n.style.background = it.bg;
+        if (it.rightPx != null) n.style.right = it.rightPx + "px";
+      }
+      n.style.top = it.top + "px";
+      it.el = n;
+      items.appendChild(n);
+    }
+    for (const r of s.ribbons || []) (r.back ? back : front).appendChild(r.g);
+    for (const d of s.dots || []) { d.el = svgEl("circle", { cx: d.x, cy: d.y, r: 0, fill: d.c }); front.appendChild(d.el); }
+    el.appendChild(items);
+    el.appendChild(front);
+    stage.appendChild(el);
+    s.el = el;
+  });
+  if (SCENES[0].wipe === undefined) SCENES[0].el.style.background = SCENES[0].bg;
+
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const easeInOut = (x) => { x = clamp(x); return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+  const easeBack = (x) => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const k = (t, a, d, f = easeOut) => d <= 0 ? (t >= a ? 1 : 0) : f((t - a) / d);
+  const lerpPts = (a, b, u) => a.map((p, i) => [p[0] + (b[i][0] - p[0]) * u, p[1] + (b[i][1] - p[1]) * u]);
+
+  function drawRibbon(r, t) {
+    const pts = r.to ? lerpPts(r.pts, r.to, k(t, r.morph[0], r.morph[1], easeInOut)) : r.pts;
+    const d = smooth(pts);
+    const w = r.w2 != null ? r.w + (r.w2 - r.w) * k(t, ...(r.wAt || r.morph), easeInOut) : r.w;
+    r.g.style.opacity = r.fadeTo != null ? 1 - (1 - r.fadeTo) * k(t, ...r.wAt, easeInOut) : 1;
+    r.segs[0].setAttribute("d", d);
+    const L = r.segs[0].getTotalLength();
+    const head = k(t, r.head[0], r.head[1], easeInOut) * L;
+    const n = r.segs.length;
+    r.segs.forEach((p, i) => {
+      p.setAttribute("d", d);
+      p.setAttribute("stroke-width", w);
+      const a = (i * L) / n, b = ((i + 1) * L) / n + (i < n - 1 ? 2 : 0);
+      const vis = Math.min(b, head) - a;
+      if (vis <= 0.5) { p.style.visibility = "hidden"; return; }
+      p.style.visibility = "visible";
+      p.setAttribute("stroke-dasharray", `0 ${a} ${vis} ${L * 2}`);
+    });
+    for (const m of r.marks) {
+      const pos = head - m.gap;
+      const on = pos > 0 && (m.at < 0 || t >= m.at);
+      m.el.style.visibility = on ? "visible" : "hidden";
+      if (!on) continue;
+      const pt = r.segs[0].getPointAtLength(pos);
+      m.el.setAttribute("cx", pt.x); m.el.setAttribute("cy", pt.y);
+      m.el.setAttribute("r", m.r * (m.at < 0 ? 1 : k(t, m.at, 0.4, easeBack)));
+    }
+  }
+
+  window.seek = (t) => {
+    for (const s of SCENES) {
+      const on = t >= s.from && t <= s.to;
+      s.el.style.display = on ? "block" : "none";
+      if (!on) continue;
+      if (s.wipe) {
+        const L = s.wipe.getTotalLength();
+        s.wipe.style.strokeDasharray = L;
+        s.wipe.style.strokeDashoffset = L * (1 - k(t, s.from, WIPE, easeInOut));
+      }
+      for (const r of s.ribbons || []) drawRibbon(r, t);
+      for (const d of s.dots || []) {
+        let r = d.r * k(t, d.at, 0.5, easeBack);
+        if (d.pulse && t > d.at + 0.5) r *= 1 + 0.12 * Math.sin((t - d.at) * 6);
+        d.el.setAttribute("r", Math.max(0, r));
+      }
+      for (const it of s.items) {
+        const n = it.el;
+        const btnShift = it.cls === "btn" ? " translateX(50%)" : "";
+        const rot = it.rot ? ` rotate(${it.rot}deg)` : "";
+        if (it.anim === "pop") {
+          const a = k(t, it.at, 0.55, easeBack);
+          n.style.opacity = clamp((t - it.at) / 0.2);
+          n.style.transform = `scale(${0.6 + 0.4 * a})${btnShift}`;
+        } else {
+          const a = k(t, it.at, 0.6);
+          n.style.opacity = a;
+          n.style.transform = `translateY(${(1 - a) * 60}px)${btnShift}${rot}`;
+          if (it.anim === "dim") {
+            const dd = k(t, it.dimAt, 1.2);
+            n.style.opacity = a * (1 - 0.75 * dd);
+            n.style.filter = `blur(${4 * dd}px)`;
+          }
+        }
+      }
+    }
+  };
+  window.DURATION = DURATION;
+  window.seek(0);
+</script>
+</body>
+</html>
