@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Revital Chitayat - 60s reel</title>
+<style>
+  @font-face { font-family: "Assistant"; font-weight: 400; src: url(assets/assistant-hebrew-400-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 700; src: url(assets/assistant-hebrew-700-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 800; src: url(assets/assistant-hebrew-800-normal.woff2) format("woff2"); unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+  @font-face { font-family: "Assistant"; font-weight: 400; src: url(assets/assistant-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  @font-face { font-family: "Assistant"; font-weight: 700; src: url(assets/assistant-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  @font-face { font-family: "Assistant"; font-weight: 800; src: url(assets/assistant-latin-800-normal.woff2) format("woff2"); unicode-range: U+0000-00FF; }
+  @font-face { font-family: "Space Grotesk"; font-weight: 500; src: url(assets/space-grotesk-latin-500-normal.woff2) format("woff2"); }
+
+  :root { --lavender: #CDAEE4; --lime: #CCF359; --sand: #CEC3BC; --choc: #41262D; --snow: #F8F8F8; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--snow); }
+  body { font-family: "Assistant", sans-serif; color: var(--choc); }
+  .scene { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  svg.waves { position: absolute; inset: 0; width: 100%; height: 100%; }
+  svg.waves path { fill: none; stroke-linecap: round; }
+  .it { position: absolute; right: 90px; left: 90px; opacity: 0; will-change: transform, opacity, filter; transform-origin: right center; }
+  .xl { font-size: 190px; font-weight: 800; line-height: 1; }
+  .l  { font-size: 130px; font-weight: 800; line-height: 1.05; }
+  .m  { font-size: 84px;  font-weight: 700; line-height: 1.15; }
+  .s  { font-size: 56px;  font-weight: 400; line-height: 1.3; }
+  .chip { right: auto; left: auto; display: inline-block; padding: 22px 44px; border-radius: 999px; font-size: 58px; font-weight: 700; }
+  .center { text-align: center; transform-origin: center; }
+  .en { font-family: "Space Grotesk", sans-serif; direction: ltr; letter-spacing: .14em; text-transform: uppercase; }
+  .logo { position: absolute; left: 90px; width: 900px; opacity: 0; }
+  .btn { right: 50%; left: auto; transform-origin: center; background: var(--lime); color: var(--choc); font-size: 64px; font-weight: 800; padding: 30px 80px; border-radius: 999px; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+  // Script timeline. Each scene: time window, background, waves, items.
+  // Item anim: "rise" (default) | "pop" | "dim" (appears then fades to grey at dimAt).
+  const C = { lav: "#CDAEE4", lime: "#CCF359", sand: "#CEC3BC", choc: "#41262D", snow: "#F8F8F8" };
+  const WAVE_TOP = "M -100 260 C 180 80, 400 440, 660 260 S 1000 90, 1180 280";
+  const WAVE_LOW = "M 1180 1640 C 900 1460, 760 1820, 500 1640 S 100 1480, -100 1660";
+  const WAVE_MID = "M -100 1050 C 200 760, 420 1340, 640 1040 S 960 760, 1180 1060";
+
+  const SCENES = [
+    { from: 0, to: 5.2, bg: C.lav,
+      waves: [{ d: WAVE_LOW, c: C.lime, w: 80, at: 0.2, dur: 1.6 }],
+      items: [
+        { t: "מכירים את", cls: "m", top: 620, at: 0.2 },
+        { t: "תסמונת<br>משה רבנו?", cls: "xl", top: 760, at: 0.7, anim: "pop" },
+      ] },
+    { from: 5, to: 12.2, bg: C.snow,
+      waves: [{ d: WAVE_TOP, c: C.lav, w: 70, at: 5.1, dur: 1.5 }],
+      items: [
+        { t: "קריאה פנימית", cls: "l", top: 470, at: 5.3 },
+        { t: "להוביל.", cls: "m", top: 700, at: 6.6 },
+        { t: "לקדם שינוי.", cls: "m", top: 820, at: 7.4 },
+        { t: "לקחת אנשים", cls: "m", top: 1000, at: 8.6 },
+        { t: "מעבדות לחירות.", cls: "l", top: 1110, at: 9.2, color: C.choc, hl: C.lime },
+      ] },
+    { from: 12, to: 17.2, bg: C.choc, fg: C.snow,
+      items: [
+        { t: "מי אני?", cls: "xl", top: 640, at: 12.3, anim: "pop" },
+        { t: "למה אני?", cls: "xl", top: 900, at: 13.8, anim: "pop", color: C.lav },
+      ] },
+    { from: 17, to: 25.2, bg: C.snow,
+      waves: [{ d: "M -100 600 C 300 300, 500 1300, 1180 900", c: C.choc, w: 900, at: 23.4, dur: 1.2 }],
+      items: [
+        { t: "אולי אני צריכה עוד קורס", cls: "chip", top: 520, rightPx: 90, at: 17.4, bg: C.sand, rot: -2 },
+        { t: "מה יחשבו עליי", cls: "chip", top: 700, rightPx: 260, at: 18.8, bg: C.lav, rot: 2.5 },
+        { t: "לא נעים לי להיחשף", cls: "chip", top: 880, rightPx: 120, at: 20.0, bg: C.sand, rot: -1.5 },
+        { t: "אחרים עושים את זה טוב יותר", cls: "chip", top: 1060, rightPx: 70, at: 21.2, bg: C.lime, rot: 1.5 },
+      ] },
+    { from: 25, to: 30.2, bg: C.lav,
+      items: [
+        { t: "אלה", cls: "m", top: 640, at: 25.3 },
+        { t: "מחסומי<br>הגדולה.", cls: "xl", top: 770, at: 25.8, anim: "pop" },
+      ],
+      waves: [{ d: WAVE_LOW, c: C.choc, w: 70, at: 26.4, dur: 1.4 }] },
+    { from: 30, to: 37.2, bg: C.sand,
+      items: [
+        { t: "סיפור ילדות", cls: "m", top: 480, at: 30.3 },
+        { t: "שלימד אותנו", cls: "m", top: 590, at: 31.0 },
+        { t: "לעמעם את האור.", cls: "m", top: 760, at: 32.0, anim: "dim", dimAt: 34.6 },
+        { t: "לצמצם נוכחות.", cls: "m", top: 880, at: 33.0, anim: "dim", dimAt: 34.9 },
+        { t: "כדי להישאר שייכים.", cls: "m", top: 1060, at: 34.6 },
+      ] },
+    { from: 37, to: 46.2, bg: C.lime,
+      waves: [{ d: WAVE_TOP, c: C.lav, w: 80, at: 37.2, dur: 1.4 }, { d: WAVE_LOW, c: C.choc, w: 80, at: 37.6, dur: 1.4 }],
+      items: [
+        { t: "בתהליך המנטורינג", cls: "s", top: 470, at: 37.3 },
+        { t: "עושים בדיוק<br>את ההפך:", cls: "m", top: 560, at: 38.2 },
+        { t: "להגביר", cls: "xl", top: 800, at: 39.8, anim: "pop" },
+        { t: "את הקול.", cls: "l", top: 1010, at: 41.4 },
+        { t: "את הנוכחות.", cls: "l", top: 1150, at: 42.4 },
+        { t: "את המסר.", cls: "l", top: 1290, at: 43.4 },
+      ] },
+    { from: 46, to: 52.2, bg: C.snow,
+      waves: [{ d: WAVE_MID, c: C.lav, w: 90, at: 46.1, dur: 2.0 }],
+      items: [
+        { t: "כדי שהאנשים<br>שמחכים לכם", cls: "m", top: 470, at: 46.3 },
+        { t: "יזהו אתכם", cls: "l", top: 1220, at: 48.0 },
+        { t: "וילכו אחריכם.", cls: "l", top: 1360, at: 49.2 },
+      ] },
+    { from: 52, to: 60, bg: C.snow,
+      waves: [{ d: WAVE_TOP, c: C.lav, w: 70, at: 52.1, dur: 1.4 }, { d: WAVE_LOW, c: C.lime, w: 70, at: 52.3, dur: 1.4 }],
+      items: [
+        { t: "אם הקריאה הזו<br>מוכרת לכם,", cls: "m center", top: 520, at: 52.3 },
+        { logo: true, top: 800, at: 53.4 },
+        { t: "בואו נדבר", cls: "btn", top: 1170, at: 54.8, anim: "pop" },
+        { t: "הקישור בפרופיל", cls: "s center", top: 1340, at: 55.6 },
+      ] },
+  ];
+  const DURATION = 60;
+
+  const stage = document.getElementById("stage");
+  const NS = "http://www.w3.org/2000/svg";
+  for (const s of SCENES) {
+    const el = document.createElement("section");
+    el.className = "scene";
+    el.style.background = s.bg;
+    el.style.color = s.fg || C.choc;
+    if (s.waves) {
+      const svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("class", "waves");
+      svg.setAttribute("viewBox", "0 0 1080 1920");
+      for (const w of s.waves) {
+        const p = document.createElementNS(NS, "path");
+        p.setAttribute("d", w.d); p.setAttribute("stroke", w.c); p.setAttribute("stroke-width", w.w);
+        svg.appendChild(p);
+        w.el = p;
+      }
+      el.appendChild(svg);
+    }
+    for (const it of s.items) {
+      let n;
+      if (it.logo) {
+        n = document.createElement("img");
+        n.src = "assets/logo.png"; n.className = "logo";
+      } else {
+        n = document.createElement("div");
+        n.className = "it " + it.cls;
+        n.innerHTML = it.hl ? `<span style="background:${it.hl};padding:0 18px;box-decoration-break:clone">${it.t}</span>` : it.t;
+        if (it.color) n.style.color = it.color;
+        if (it.bg) n.style.background = it.bg;
+        if (it.rightPx != null) n.style.right = it.rightPx + "px";
+      }
+      n.style.top = it.top + "px";
+      it.el = n;
+      el.appendChild(n);
+    }
+    stage.appendChild(el);
+    s.el = el;
+  }
+  document.querySelectorAll("svg.waves path").forEach((p) => {
+    p.dataset.len = p.getTotalLength();
+    p.style.strokeDasharray = p.dataset.len;
+  });
+
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+  const easeBack = (x) => { x = clamp(x); const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const k = (t, a, d, f = easeOut) => f((t - a) / d);
+
+  window.seek = (t) => {
+    for (const s of SCENES) {
+      const fadeIn = s.from === 0 ? 1 : k(t, s.from, 0.3);
+      const fadeOut = 1 - k(t, s.to - 0.3, 0.3);
+      s.el.style.opacity = t >= s.from && t <= s.to ? Math.min(fadeIn, fadeOut) : 0;
+      for (const w of s.waves || []) w.el.style.strokeDashoffset = w.el.dataset.len * (1 - k(t, w.at, w.dur));
+      for (const it of s.items) {
+        const n = it.el;
+        const btnShift = it.cls === "btn" ? " translateX(50%)" : "";
+        const rot = it.rot ? ` rotate(${it.rot}deg)` : "";
+        if (it.anim === "pop") {
+          const a = k(t, it.at, 0.55, easeBack);
+          n.style.opacity = clamp((t - it.at) / 0.2);
+          n.style.transform = `scale(${0.6 + 0.4 * a})${btnShift}`;
+        } else {
+          const a = k(t, it.at, 0.6);
+          n.style.opacity = a;
+          n.style.transform = `translateY(${(1 - a) * 60}px)${btnShift}${rot}`;
+          if (it.anim === "dim") {
+            const d = k(t, it.dimAt, 1.2);
+            n.style.opacity = a * (1 - 0.75 * d);
+            n.style.filter = `blur(${4 * d}px)`;
+          }
+        }
+      }
+    }
+  };
+  window.DURATION = DURATION;
+  window.seek(0);
+</script>
+</body>
+</html>

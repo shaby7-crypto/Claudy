@@ -1,5 +1,5 @@
 // Renders template.html frame by frame to an MP4.
-// Usage: node render.js [out.mp4] [fps]
+// Usage: node render.js [out.mp4] [fps] [page.html]
 const { chromium } = require("playwright");
 const { spawn } = require("child_process");
 const path = require("path");
@@ -10,7 +10,7 @@ const fps = Number(process.argv[3] || 30);
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
-  await page.goto("file://" + path.join(__dirname, "template.html"));
+  await page.goto("file://" + path.join(__dirname, process.argv[4] || "template.html"));
   await page.evaluate(() => document.fonts.ready);
   const duration = await page.evaluate(() => window.DURATION);
 
